@@ -71,9 +71,11 @@ Este repositorio combina un backend en Symfony, un frontend en Angular y una bas
 ### 2. Clona el repositorio
 
 ```bash
-git clone git@github.com:campus-CodeArts/Onboarding-SymfAngular.git
-cd Onboarding-SymfAngular
+git clone <URL_REPOSITORIO>
+cd <REPOSITORIO>
 ```
+
+Para obtener la Url del repo, entra al mismo en GitLab y copia la Url del desplegable Code y copia la url destinada a SSH.
 
 ---
 
