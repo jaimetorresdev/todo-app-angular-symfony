@@ -79,6 +79,13 @@ Modelar en Symfony las mismas tablas que preparaste en PostgreSQL (`usuarios`, `
    - Tabla `usuario` con columnas `nombre`, `email`, `password`, `roles` (json), `fecha_registro`.
    - Tabla `tarea` con FK a `usuario`.
 2. Lanza `php bin/console doctrine:migrations:migrate`. (Are you sure you wish to continue? (yes/no) [yes] contestar como "yes")
+
+   Nota (si te aparece un error porque ya existía una migración previa):
+   - Elimina las migraciones generadas anteriormente: `rm -f migrations/*.php` (o bórralas manualmente en la carpeta `migrations/`).
+   - En DBeaver, elimina las tablas `usuario` y `tarea` del esquema de la base de datos (si existe, puedes eliminar también `doctrine_migration_versions`).
+   - Vuelve a crear la migración: `php bin/console make:migration`.
+   - Ejecuta de nuevo: `php bin/console doctrine:migrations:migrate`.
+
 3. En DBeaver, refresca el esquema y verifica que las tablas coinciden con las creadas en los ejercicios PostgreSQL.
 
 Si ves dos tablas extra (`doctrine_migration_versions` y `messenger_messages`), no te alarmes: son de Symfony y sirven para llevar el control de las migraciones y la cola de Messenger; no forman parte de tu modelo.
