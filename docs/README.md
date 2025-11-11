@@ -6,6 +6,18 @@ Este directorio contiene rutas de aprendizaje guiadas y retos prácticos para el
 - **Ejercicios**: actividades para practicar. Cada ejercicio termina con una sección “Piensa antes de ver la solución”.
 - **Soluciones** (`*.solucion.md`): referencia opcional para validar lo que hiciste o desbloquearte.
 
+> Importante · Trabaja en ramas por ejercicio
+>
+> - Usa `main` solo al clonar. No trabajes en `main`.
+> - Crea una rama por ejercicio con el formato `ejercicioX.Y-tuNombre` (ej.: `ejercicio1.1-fran`).
+> - Para cada ejercicio, crea tu rama directamente:
+>   ```bash
+>   git fetch origin
+>   git checkout -b ejercicioX.Y-tuNombre
+>   git push -u origin ejercicioX.Y-tuNombre
+>   ```
+> - Sube siempre tus cambios a esa rama. Así podremos ayudarte sin tocar `main`.
+
 Antes de empezar, revisa el [Proyecto Onboarding](proyecto-onboarding.md). Allí se describe la aplicación única que construiremos entre todos: una **To-Do App** con usuarios y roles (`ROLE_USER`, `ROLE_ADMIN`). Todas las guías y ejercicios se han adaptado a ese dominio; mantén siempre la nomenclatura propuesta (`usuarios`, `tareas`) para que el equipo trabaje en la misma base de código.
 
 Si trabajas con tableros o issues, importa [`tasks-gitlab.csv`](tasks-gitlab.csv) en GitLab para generar las tareas del onboarding (duplica cada issue añadiendo tu nombre al título y documenta el avance con capturas).

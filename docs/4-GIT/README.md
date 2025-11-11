@@ -2,6 +2,18 @@
 
 Practicarás el flujo de trabajo que seguimos en el equipo con Git/GitLab: creación de ramas, commits descriptivos, issues y uso de MR. Incluye un ejercicio extra opcional para publicar tu propio repositorio (ideal como base de TFG/portfolio).
 
+> Nota rápida · Rama por ejercicio
+>
+> - No trabajes en `main` (úsalo solo al clonar).
+> - Crea una rama por ejercicio: `ejercicioX.Y-tuNombre` (p. ej. `ejercicio1.1-fran`).
+> - Arranca cada ejercicio creando tu rama directamente:
+>   ```bash
+>   git fetch origin
+>   git checkout -b ejercicioX.Y-tuNombre
+>   git push -u origin ejercicioX.Y-tuNombre
+>   ```
+> - Si necesitas ayuda, empuja tus cambios y comparte la rama o abre un MR.
+
 ## Prerrequisitos
 
 - Cuenta en GitLab o GitHub y acceso al repositorio.

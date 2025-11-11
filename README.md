@@ -2,6 +2,18 @@
 
 Este repositorio combina un backend en Symfony, un frontend en Angular y una base de datos PostgreSQL. Puedes ejecutar todo con Docker o levantar cada parte de manera nativa en tu equipo. A continuación encontrarás una guía pensada para alumnos que aún no tienen nada instalado y quieren entender qué herramienta usar, cómo configurarla y por qué.
 
+> Importante · Trabaja siempre en una rama por ejercicio
+>
+> - Usa `main` solo al clonar el proyecto. No trabajes nunca en `main`.
+> - Crea una rama por cada ejercicio con el formato `ejercicioX.Y-tuNombre` (ej.: `ejercicio1.1-fran`).
+> - Antes de empezar un ejercicio, crea tu rama directamente:
+>   ```bash
+>   git fetch origin
+>   git checkout -b ejercicio1.1-fran 
+>   git push -u origin ejercicio1.1-fran
+>   ```
+> - Si necesitas ayuda, sube tus cambios a esa rama y avisa (puedes abrir un MR si procede).
+
 ---
 
 ## Opciones de ejecución
