@@ -181,7 +181,7 @@ Configurar LexikJWTAuthenticationBundle para permitir registro y login de usuari
    ```
 8. Declara la ruta en `config/routes.yaml`. Deja el bloque que ya existe para los controladores por atributos y añade debajo la ruta explícita para el login:
 
-   ```yaml
+```yaml
 controllers:
     resource:
         path: ../src/Controller/
@@ -190,16 +190,16 @@ controllers:
 
 api_auth_login:
     path: /api/login
-   ```
+```
 
 9. Prueba la autenticación desde tu terminal:
 
-   ```bash
+```bash
    curl -X POST \
         http://localhost:8000/api/login \
         -H 'Content-Type: application/json' \
         -d '{"email":"alumno@example.com","password":"Secret123!"}'
-   ```
+```
 
    La respuesta JSON incluye el campo `token`. Guárdalo para usarlo en `Authorization: Bearer <token>` al llamar a `/api/me`.
 
