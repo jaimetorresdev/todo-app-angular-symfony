@@ -6,6 +6,7 @@ services:
     container_name: symfony_backend
     restart: unless-stopped
     working_dir: /var/www/app
+    entrypoint: ["docker-entrypoint.sh"]
     volumes:
       - ./symfony-backend:/var/www/app
     depends_on:
@@ -18,13 +19,10 @@ services:
         until pg_isready -h db -U symfony -d symfony_db; do
           sleep 2;
         done;
-        
+
         if [ ! -f /var/www/app/vendor/autoload.php ]; then
           composer install;
         fi
-        
-        php bin/console doctrine:database:create --if-not-exists;
-        php bin/console doctrine:schema:update --force;
 
         if symfony server:status > /dev/null 2>&1; then
           symfony server:stop;
@@ -32,7 +30,6 @@ services:
 
         symfony server:start --no-tls --port=8000 --allow-all-ip;
       "
-
 
   db:
     image: postgres:17
@@ -66,7 +63,6 @@ services:
     ports:
       - "4200:4200"
     command: ["sh", "-c", "npm install && ng serve --host 0.0.0.0 --poll 2000 --watch"]
-
 
 volumes:
   pgdata:

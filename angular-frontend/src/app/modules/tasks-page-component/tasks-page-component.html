@@ -1,0 +1,39 @@
+<main class="mx-auto min-h-screen max-w-7xl bg-white px-4 py-24 sm:px-8 sm:py-32 lg:px-16">
+  <app-back-to-landing-button class="mb-6 block"></app-back-to-landing-button>
+
+  <app-page-title
+    title="Gestión de Tareas"
+    subtitle="Organiza y administra tus tareas pendientes"
+  ></app-page-title>
+
+  <app-task-form-component
+    (submitted)="onTaskSubmitted($event)"
+  ></app-task-form-component>
+
+  <div class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
+    <div *ngFor="let task of tasks" class="rounded-lg border border-gray-200 p-4 shadow-sm">
+      <h3 class="text-lg font-semibold text-gray-900">
+        {{ task.title }}
+      </h3>
+
+      <p class="mt-2">
+        Estado:
+        <span
+          [class]="
+            task.status === 'completada' ? 'text-green-600' :
+            task.status === 'en progreso' ? 'text-blue-600' :
+            'text-yellow-600'
+          "
+        >
+          {{ task.status }}
+        </span>
+      </p>
+
+      @if (task.dueDate) {
+        <p class="mt-1 text-sm text-gray-600">
+          Fecha límite: {{ task.dueDate }}
+        </p>
+      }
+    </div>
+  </div>
+</main>
