@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Tarea;
 use App\Entity\Usuario;
 use App\Repository\TareaRepository;
 use App\Service\TareaManager;
@@ -34,7 +35,11 @@ class TaskController extends AbstractController
             'texto' => $request->query->get('q'),
         ];
 
-        return $this->json($this->tareaManager->listarPorUsuario($usuarioId, $filtros));
+        $tareas = $this->tareaManager->listarPorUsuario($usuarioId, $filtros);
+
+        $data = array_map(fn (Tarea $tarea) => $this->serializeTask($tarea), $tareas);
+
+        return $this->json($data);
     }
 
     #[Route('', name: 'api_tasks_create', methods: ['POST'])]
@@ -45,8 +50,7 @@ class TaskController extends AbstractController
         $usuarioId = $usuario?->getId() ?? $request->query->getInt('usuarioId', 1);
 
         $payload = json_decode($request->getContent(), true);
-        
-        // [RETO 3] Validación de JSON
+
         if (json_last_error() !== JSON_ERROR_NONE || null === $payload) {
             throw new BadRequestHttpException('Formato de datos inválido.');
         }
@@ -54,7 +58,7 @@ class TaskController extends AbstractController
         $usuarioRef = $this->entityManager->getReference(Usuario::class, $usuarioId);
         $tarea = $this->tareaManager->crear($payload, $usuarioRef);
 
-        return $this->json($tarea, JsonResponse::HTTP_CREATED);
+        return $this->json($this->serializeTask($tarea), JsonResponse::HTTP_CREATED);
     }
 
     #[Route('/{id}', name: 'api_tasks_update', methods: ['PUT'])]
@@ -72,10 +76,9 @@ class TaskController extends AbstractController
         $payload = json_decode($request->getContent(), true) ?? [];
         $tareaActualizada = $this->tareaManager->actualizar($tarea, $payload);
 
-        // [RETO 3] Mensaje de éxito personalizado
         return $this->json([
             'message' => 'Tarea actualizada con éxito',
-            'data' => $tareaActualizada
+            'data' => $this->serializeTask($tareaActualizada),
         ]);
     }
 
@@ -86,7 +89,6 @@ class TaskController extends AbstractController
         $usuario = $this->getUser();
         $usuarioId = $usuario?->getId() ?? $request->query->getInt('usuarioId', 1);
 
-        // Verificamos que la tarea exista y pertenezca al usuario
         $tarea = $this->tareaManager->aseguraPerteneceAUsuario(
             $this->tareaRepository->find($id),
             $usuarioId
@@ -94,17 +96,15 @@ class TaskController extends AbstractController
 
         $payload = json_decode($request->getContent(), true);
 
-        // [RETO 3] Validación de JSON
         if (json_last_error() !== JSON_ERROR_NONE || null === $payload) {
             throw new BadRequestHttpException('JSON corrupto o mal formado.');
         }
 
-        // Cambio de estado delegando en el servicio
         $tareaActualizada = $this->tareaManager->cambiarEstado($tarea, $payload['estado'] ?? '');
 
         return $this->json([
             'message' => 'Estado de la tarea actualizado',
-            'data' => $tareaActualizada
+            'data' => $this->serializeTask($tareaActualizada),
         ]);
     }
 
@@ -122,7 +122,23 @@ class TaskController extends AbstractController
 
         $this->tareaManager->eliminar($tarea);
 
-        // [RETO 3] Respuesta limpia
         return $this->json(['message' => 'Tarea eliminada satisfactoriamente']);
+    }
+
+    private function serializeTask(Tarea $tarea): array
+    {
+        return [
+            'id' => $tarea->getId(),
+            'titulo' => $tarea->getTitulo(),
+            'descripcion' => $tarea->getDescripcion(),
+            'estado' => $tarea->getEstado(),
+            'fechaCreacion' => $tarea->getFechaCreacion()?->format('Y-m-d H:i:s'),
+            'fechaLimite' => $tarea->getFechaLimite()?->format('Y-m-d'),
+            'usuario' => $tarea->getUsuario() ? [
+                'id' => $tarea->getUsuario()->getId(),
+                'nombre' => $tarea->getUsuario()->getNombre(),
+                'email' => $tarea->getUsuario()->getEmail(),
+            ] : null,
+        ];
     }
 }

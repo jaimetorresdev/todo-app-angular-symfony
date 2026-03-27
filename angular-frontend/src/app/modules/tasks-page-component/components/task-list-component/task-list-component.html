@@ -1,0 +1,66 @@
+<section class="mt-10">
+  @if ((loading$ | async)) {
+    <p class="text-sm text-slate-500 dark:text-slate-300">Cargando tareas…</p>
+  }
+
+  @if ((error$ | async); as err) {
+    <p class="text-sm text-red-600">{{ err }}</p>
+  }
+
+  @if ((tasks$ | async); as tasks) {
+    @if (!tasks.length) {
+      <p class="text-sm text-slate-500 dark:text-slate-300">No hay tareas.</p>
+    }
+
+    @if (tasks.length) {
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
+        <article
+          *ngFor="let t of tasks"
+          class="rounded-lg border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-900"
+        >
+          <h3 class="text-lg font-semibold text-slate-900 dark:text-slate-100">{{ t.titulo }}</h3>
+
+          <p class="text-sm text-slate-600 dark:text-slate-300">
+            Estado:
+            <span
+              class="font-semibold capitalize"
+              [class.text-blue-600]="t.estado === 'en progreso'"
+              [class.text-emerald-600]="t.estado === 'completada'"
+              [class.text-amber-600]="t.estado === 'pendiente'"
+            >
+              {{ t.estado }}
+            </span>
+          </p>
+
+          <p class="text-sm text-slate-500 dark:text-slate-300">
+            Fecha límite: {{ t.fechaLimite || 'Sin fecha definida' }}
+          </p>
+
+          <p class="mt-2 text-sm text-slate-600 dark:text-slate-300">
+            {{ t.descripcion || 'Sin descripción' }}
+          </p>
+
+          <div class="mt-3">
+            <label
+              class="block text-sm font-medium text-slate-700 dark:text-slate-200"
+              [for]="'estado-tarea-' + t.id"
+            >
+              Cambiar estado
+            </label>
+            <select
+              [id]="'estado-tarea-' + t.id"
+              class="mt-1 h-10 w-full rounded-md border border-slate-300 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary-600 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100"
+              [value]="t.estado"
+              [attr.aria-label]="'Cambiar estado de la tarea ' + t.titulo"
+              (change)="onStatusChange(t.id, $any($event.target).value)"
+            >
+              <option value="pendiente">Pendiente</option>
+              <option value="en progreso">En progreso</option>
+              <option value="completada">Completada</option>
+            </select>
+          </div>
+        </article>
+      </div>
+    }
+  }
+</section>

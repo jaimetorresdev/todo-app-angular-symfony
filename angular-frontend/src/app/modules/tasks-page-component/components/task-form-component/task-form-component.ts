@@ -1,11 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
+import { TaskPayload } from '../../../../shared/interfaces/tasks';
 
 @Component({
   selector: 'app-task-form-component',
@@ -14,7 +15,8 @@ import {
   templateUrl: './task-form-component.html'
 })
 export class TaskFormComponent implements OnInit {
-  @Output() submitted = new EventEmitter<any>();
+  @Input() submitting = false;
+  @Output() submitted = new EventEmitter<TaskPayload>();
 
   form!: FormGroup;
 
@@ -35,6 +37,10 @@ export class TaskFormComponent implements OnInit {
       return;
     }
 
-    this.submitted.emit(this.form.getRawValue());
+    if (this.submitting) {
+      return;
+    }
+
+    this.submitted.emit(this.form.getRawValue() as TaskPayload);
   }
 }

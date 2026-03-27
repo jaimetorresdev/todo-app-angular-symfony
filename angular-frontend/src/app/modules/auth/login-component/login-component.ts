@@ -1,22 +1,27 @@
+import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../shared/services/auth-service';
+import { AuthStore } from '../../../shared/services/auth-store';
+import { ToastService } from '../../../shared/services/toast-service';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink],
   templateUrl: './login-component.html',
 })
 export class LoginComponent implements OnInit {
-  form!: FormGroup;
   loading = false;
+  form!: FormGroup;
 
   constructor(
-    private fb: FormBuilder,
-    private auth: AuthService,
-    private router: Router
+    private readonly fb: FormBuilder,
+    private readonly auth: AuthService,
+    private readonly store: AuthStore,
+    private readonly toast: ToastService,
+    private readonly router: Router
   ) {}
 
   ngOnInit(): void {
@@ -27,15 +32,44 @@ export class LoginComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (this.form.invalid) {
+    if (this.form.invalid || this.loading) {
       this.form.markAllAsTouched();
       return;
     }
 
     this.loading = true;
-    this.auth.login(this.form.getRawValue() as any).subscribe({
-      next: () => this.router.navigateByUrl('/tasks'),
-      error: () => (this.loading = false),
+
+    const { email, password } = this.form.getRawValue();
+
+    this.auth.login({
+      email: email ?? '',
+      password: password ?? '',
+    }).subscribe({
+      next: (res) => {
+        this.store.setSession(res.token);
+
+        this.store.loadMe().subscribe({
+          next: (user) => {
+            this.toast.success('Sesión iniciada correctamente');
+            this.loading = false;
+
+            if (user.roles.includes('ROLE_ADMIN')) {
+              this.router.navigateByUrl('/admin');
+            } else {
+              this.router.navigateByUrl('/tasks');
+            }
+          },
+          error: () => {
+            this.loading = false;
+            this.toast.error('No se pudo cargar el usuario autenticado');
+          },
+        });
+      },
+      error: (err) => {
+        this.loading = false;
+        const msg = err?.error?.message || 'Credenciales incorrectas';
+        this.toast.error(msg);
+      },
     });
   }
 }

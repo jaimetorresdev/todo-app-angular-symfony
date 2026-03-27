@@ -1,0 +1,192 @@
+<main class="mx-auto max-w-7xl px-4 py-10 dark:bg-slate-950">
+  <div class="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+    <div>
+      <h1 class="text-3xl font-bold text-accent dark:text-slate-100">Panel de administración</h1>
+      <p class="mt-2 text-sm text-slate-600 dark:text-slate-300">
+        Gestiona usuarios, permisos y credenciales temporales desde un único panel.
+      </p>
+    </div>
+
+    <div class="flex items-center gap-3">
+      <span class="text-sm text-slate-500 dark:text-slate-300">
+        {{ store.user()?.email }}
+      </span>
+    </div>
+  </div>
+
+  <section class="rounded-lg border bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-900">
+    <h2 class="mb-4 text-lg font-semibold text-accent dark:text-slate-100">Crear usuario</h2>
+
+    <form [formGroup]="createForm" (ngSubmit)="onCreateUser()" class="grid grid-cols-1 gap-4 md:grid-cols-2">
+      <div>
+        <label for="email" class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200">Email</label>
+        <input
+          id="email"
+          type="email"
+          formControlName="email"
+          [ngClass]="{
+            'border-red-500 focus:ring-red-500': createForm.get('email')?.invalid && createForm.get('email')?.touched,
+            'border-slate-300 focus:ring-primary-600 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100': !(createForm.get('email')?.invalid && createForm.get('email')?.touched)
+          }"
+          class="h-10 w-full rounded-md border px-3 text-sm focus:outline-none focus:ring-2"
+        />
+
+        <p
+          *ngIf="createForm.get('email')?.hasError('required') && createForm.get('email')?.touched"
+          class="mt-1 text-sm text-red-600"
+        >
+          El email es obligatorio.
+        </p>
+
+        <p
+          *ngIf="createForm.get('email')?.hasError('email') && createForm.get('email')?.touched"
+          class="mt-1 text-sm text-red-600"
+        >
+          Introduce un email válido.
+        </p>
+      </div>
+
+      <div>
+        <label for="password" class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200">Contraseña</label>
+        <input
+          id="password"
+          type="password"
+          formControlName="password"
+          [ngClass]="{
+            'border-red-500 focus:ring-red-500': createForm.get('password')?.invalid && createForm.get('password')?.touched,
+            'border-slate-300 focus:ring-primary-600 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100': !(createForm.get('password')?.invalid && createForm.get('password')?.touched)
+          }"
+          class="h-10 w-full rounded-md border px-3 text-sm focus:outline-none focus:ring-2"
+        />
+
+        <p
+          *ngIf="createForm.get('password')?.hasError('required') && createForm.get('password')?.touched"
+          class="mt-1 text-sm text-red-600"
+        >
+          La contraseña es obligatoria.
+        </p>
+
+        <p
+          *ngIf="createForm.get('password')?.hasError('minlength') && createForm.get('password')?.touched"
+          class="mt-1 text-sm text-red-600"
+        >
+          La contraseña debe tener al menos 6 caracteres.
+        </p>
+      </div>
+
+      <div>
+        <label for="nombre" class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200">Nombre</label>
+        <input
+          id="nombre"
+          type="text"
+          formControlName="nombre"
+          class="h-10 w-full rounded-md border border-slate-300 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary-600 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100"
+        />
+      </div>
+
+      <div class="flex items-center">
+        <label class="inline-flex items-center gap-2 text-sm text-slate-700 dark:text-slate-200">
+          <input type="checkbox" formControlName="isAdmin" />
+          Crear como administrador
+        </label>
+      </div>
+
+      <div class="md:col-span-2">
+        <button
+          type="submit"
+          [disabled]="creatingUser"
+          aria-label="Crear nuevo usuario"
+          class="inline-flex h-10 items-center rounded-md bg-primary px-4 text-sm font-medium text-white transition hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-600 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
+        >
+          {{ creatingUser ? 'Creando...' : 'Crear usuario' }}
+        </button>
+      </div>
+    </form>
+  </section>
+
+  <section class="mt-8 rounded-lg border bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-900">
+    <h2 class="mb-4 text-lg font-semibold text-accent dark:text-slate-100">Buscar usuarios</h2>
+
+    <div class="flex flex-col gap-3 md:flex-row md:items-start">
+      <div class="relative w-full md:max-w-md">
+        <input
+          type="text"
+          [(ngModel)]="search"
+          name="search"
+          (input)="updateSuggestions()"
+          (focus)="updateSuggestions()"
+          placeholder="Buscar por email o nombre"
+          autocomplete="off"
+          class="h-10 w-full rounded-md border border-slate-300 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary-600 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100"
+        />
+
+        <div
+          *ngIf="search.trim() && filteredSuggestions.length > 0"
+          class="absolute z-20 mt-1 w-full overflow-hidden rounded-md border border-slate-200 bg-white shadow-lg dark:border-slate-700 dark:bg-slate-800"
+        >
+          <button
+            *ngFor="let user of filteredSuggestions"
+            type="button"
+            (click)="selectSuggestion(user)"
+            class="block w-full border-b border-slate-100 px-3 py-2 text-left text-sm text-slate-700 hover:bg-slate-50 last:border-b-0 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-700"
+          >
+            <span class="font-medium">{{ user.nombre || 'Sin nombre' }}</span>
+            <span class="ml-2 text-slate-500 dark:text-slate-400">{{ user.email }}</span>
+          </button>
+        </div>
+      </div>
+
+      <button
+        type="button"
+        (click)="onSearch()"
+        [disabled]="searchingUsers"
+        aria-label="Buscar usuarios"
+        class="inline-flex h-10 items-center rounded-md bg-primary px-4 text-sm font-medium text-white transition hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-600 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
+      >
+        {{ searchingUsers ? 'Buscando...' : 'Buscar' }}
+      </button>
+    </div>
+  </section>
+
+  <section class="mt-8 rounded-lg border bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-900">
+    <h2 class="mb-4 text-lg font-semibold text-accent dark:text-slate-100">Listado de usuarios</h2>
+
+    <p *ngIf="loadingUsers" class="text-sm text-slate-500 dark:text-slate-300">Cargando usuarios...</p>
+    <p *ngIf="!loadingUsers && users.length === 0" class="text-sm text-slate-500 dark:text-slate-300">
+      No hay usuarios registrados.
+    </p>
+
+    <div *ngIf="!loadingUsers && users.length > 0" class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-slate-200 dark:divide-slate-700">
+        <thead class="bg-slate-50 dark:bg-slate-800">
+          <tr>
+            <th class="px-4 py-3 text-left text-sm font-semibold text-slate-700 dark:text-slate-200">ID</th>
+            <th class="px-4 py-3 text-left text-sm font-semibold text-slate-700 dark:text-slate-200">Email</th>
+            <th class="px-4 py-3 text-left text-sm font-semibold text-slate-700 dark:text-slate-200">Nombre</th>
+            <th class="px-4 py-3 text-left text-sm font-semibold text-slate-700 dark:text-slate-200">Roles</th>
+            <th class="px-4 py-3 text-right text-sm font-semibold text-slate-700 dark:text-slate-200">Acciones</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-200 dark:divide-slate-700">
+          <tr *ngFor="let user of users" class="hover:bg-slate-50 dark:hover:bg-slate-800">
+            <td class="px-4 py-3 text-sm text-slate-700 dark:text-slate-200">{{ user.id }}</td>
+            <td class="px-4 py-3 text-sm text-slate-700 dark:text-slate-200">{{ user.email }}</td>
+            <td class="px-4 py-3 text-sm text-slate-700 dark:text-slate-200">{{ user.nombre }}</td>
+            <td class="px-4 py-3 text-sm text-slate-700 dark:text-slate-200">{{ user.roles.join(', ') }}</td>
+            <td class="px-4 py-3 text-right">
+              <button
+                type="button"
+                (click)="onResetPassword(user)"
+                [disabled]="resettingUserId === user.id"
+                [attr.aria-label]="'Resetear contraseña del usuario ' + user.email"
+                class="inline-flex h-9 items-center rounded-md border border-slate-300 px-3 text-sm font-medium text-slate-700 transition hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-primary-600 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-800"
+              >
+                {{ resettingUserId === user.id ? 'Reseteando...' : 'Resetear contraseña' }}
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</main>

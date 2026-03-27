@@ -1,0 +1,84 @@
+<form
+  (ngSubmit)="onApply()"
+  [formGroup]="form"
+  class="mt-8 grid grid-cols-1 gap-4 md:grid-cols-4"
+>
+  <div class="md:col-span-2">
+    <label for="texto" class="block text-sm font-medium text-slate-700 dark:text-slate-200">Buscar</label>
+    <input
+      id="texto"
+      type="text"
+      formControlName="texto"
+      aria-label="Buscar tareas por título o descripción"
+      class="mt-1 h-10 w-full rounded-md border border-slate-300 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary-600 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100"
+      placeholder="Título o descripción"
+    />
+  </div>
+
+  <div>
+    <label for="estadoFiltro" class="block text-sm font-medium text-slate-700 dark:text-slate-200">Estado</label>
+    <select
+      id="estadoFiltro"
+      formControlName="estado"
+      aria-label="Filtrar tareas por estado"
+      class="mt-1 h-10 w-full rounded-md border border-slate-300 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary-600 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100"
+    >
+      <option value="">Todos</option>
+      <option value="pendiente">Pendiente</option>
+      <option value="en progreso">En progreso</option>
+      <option value="completada">Completada</option>
+    </select>
+  </div>
+
+  <div class="flex items-end gap-3">
+    <label class="inline-flex items-center gap-2 text-sm text-slate-700 dark:text-slate-200">
+      <input
+        type="checkbox"
+        formControlName="mostrarSoloPendientes"
+        aria-label="Mostrar solo tareas pendientes"
+      />
+      Solo pendientes
+    </label>
+  </div>
+
+  <div>
+    <label for="fechaDesde" class="block text-sm font-medium text-slate-700 dark:text-slate-200">Desde</label>
+    <input
+      id="fechaDesde"
+      type="date"
+      formControlName="fechaDesde"
+      aria-label="Filtrar tareas desde una fecha"
+      class="mt-1 h-10 w-full rounded-md border border-slate-300 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary-600 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100"
+    />
+  </div>
+
+  <div>
+    <label for="fechaHasta" class="block text-sm font-medium text-slate-700 dark:text-slate-200">Hasta</label>
+    <input
+      id="fechaHasta"
+      type="date"
+      formControlName="fechaHasta"
+      aria-label="Filtrar tareas hasta una fecha"
+      class="mt-1 h-10 w-full rounded-md border border-slate-300 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary-600 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100"
+    />
+  </div>
+
+  <div class="md:col-span-2 flex items-end gap-3">
+    <button
+      type="submit"
+      aria-label="Aplicar filtros de tareas"
+      class="inline-flex h-10 items-center rounded-md bg-primary px-5 text-sm font-medium text-white transition hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-600 focus:ring-offset-2"
+    >
+      Aplicar filtros
+    </button>
+
+    <button
+      type="button"
+      (click)="onReset()"
+      aria-label="Limpiar filtros de tareas"
+      class="inline-flex h-10 items-center rounded-md border border-slate-300 px-5 text-sm font-medium text-slate-700 transition hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-primary-600 focus:ring-offset-2 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-800"
+    >
+      Limpiar
+    </button>
+  </div>
+</form>

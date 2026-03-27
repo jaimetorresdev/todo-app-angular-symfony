@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UsuarioRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -37,9 +39,16 @@ class Usuario implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?\DateTimeImmutable $fechaRegistro = null;
 
+    /**
+     * @var Collection<int, Tarea>
+     */
+    #[ORM\OneToMany(mappedBy: 'usuario', targetEntity: Tarea::class, orphanRemoval: true)]
+    private Collection $tareas;
+
     public function __construct()
     {
-    $this->fechaRegistro = new \DateTimeImmutable();
+        $this->fechaRegistro = new \DateTimeImmutable();
+        $this->tareas = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -75,7 +84,6 @@ class Usuario implements UserInterface, PasswordAuthenticatedUserInterface
     public function getRoles(): array
     {
         $roles = $this->roles;
-        // guarantee every user at least has ROLE_USER
         $roles[] = 'ROLE_USER';
 
         return array_unique($roles);
@@ -112,7 +120,7 @@ class Usuario implements UserInterface, PasswordAuthenticatedUserInterface
     public function __serialize(): array
     {
         $data = (array) $this;
-        $data["\0".self::class."\0password"] = hash('crc32c', $this->password);
+        $data["\0" . self::class . "\0password"] = hash('crc32c', $this->password);
 
         return $data;
     }
@@ -143,6 +151,35 @@ class Usuario implements UserInterface, PasswordAuthenticatedUserInterface
     public function setFechaRegistro(\DateTimeImmutable $fechaRegistro): static
     {
         $this->fechaRegistro = $fechaRegistro;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Tarea>
+     */
+    public function getTareas(): Collection
+    {
+        return $this->tareas;
+    }
+
+    public function addTarea(Tarea $tarea): static
+    {
+        if (!$this->tareas->contains($tarea)) {
+            $this->tareas->add($tarea);
+            $tarea->setUsuario($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTarea(Tarea $tarea): static
+    {
+        if ($this->tareas->removeElement($tarea)) {
+            if ($tarea->getUsuario() === $this) {
+                $tarea->setUsuario(null);
+            }
+        }
 
         return $this;
     }

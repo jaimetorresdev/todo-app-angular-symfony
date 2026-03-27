@@ -1,39 +1,29 @@
-<main class="mx-auto min-h-screen max-w-7xl bg-white px-4 py-24 sm:px-8 sm:py-32 lg:px-16">
-  <app-back-to-landing-button class="mb-6 block"></app-back-to-landing-button>
+<main class="mx-auto min-h-screen max-w-7xl bg-slate-50 px-4 py-24 sm:px-8 sm:py-32 lg:px-16 dark:bg-slate-950">
+  <app-back-to-landing-button class="mb-6 inline-flex lg:hidden"></app-back-to-landing-button>
 
-  <app-page-title
-    title="Gestión de Tareas"
-    subtitle="Organiza y administra tus tareas pendientes"
-  ></app-page-title>
+  <div class="mb-8 flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+    <div class="w-full">
+      <app-page-title
+        class="w-full"
+        title="Gestión de Tareas"
+        subtitle="Organiza y administra tus pendientes con un vistazo rápido."
+      ></app-page-title>
+    </div>
+
+    <div class="flex items-center gap-3">
+      <app-back-to-landing-button class="hidden lg:inline-flex"></app-back-to-landing-button>
+    </div>
+  </div>
 
   <app-task-form-component
+    [submitting]="creatingTask"
     (submitted)="onTaskSubmitted($event)"
   ></app-task-form-component>
 
-  <div class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
-    <div *ngFor="let task of tasks" class="rounded-lg border border-gray-200 p-4 shadow-sm">
-      <h3 class="text-lg font-semibold text-gray-900">
-        {{ task.title }}
-      </h3>
+  <app-task-filters-component
+    (apply)="onFiltersApply($event)"
+    (reset)="onFiltersReset()"
+  ></app-task-filters-component>
 
-      <p class="mt-2">
-        Estado:
-        <span
-          [class]="
-            task.status === 'completada' ? 'text-green-600' :
-            task.status === 'en progreso' ? 'text-blue-600' :
-            'text-yellow-600'
-          "
-        >
-          {{ task.status }}
-        </span>
-      </p>
-
-      @if (task.dueDate) {
-        <p class="mt-1 text-sm text-gray-600">
-          Fecha límite: {{ task.dueDate }}
-        </p>
-      }
-    </div>
-  </div>
+  <app-task-list-component></app-task-list-component>
 </main>

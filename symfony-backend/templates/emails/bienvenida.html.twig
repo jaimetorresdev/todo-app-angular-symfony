@@ -1,57 +1,68 @@
 <!DOCTYPE html>
 <html lang="es">
   <head>
-    <meta charset="UTF-8" />
-    <title>Bienvenido a To-Do App</title>
-    <style>
-      body {
-        font-family: Arial, sans-serif;
-        background-color: #f5f7fa;
-        margin: 0;
-        padding: 0;
-      }
-      .container {
-        background-color: #ffffff;
-        padding: 24px;
-        margin: 0 auto;
-        max-width: 640px;
-        border-radius: 8px;
-        border: 1px solid #dde6f2;
-      }
-      .cta {
-        display: inline-block;
-        background-color: #2563eb;
-        color: #ffffff !important;
-        text-decoration: none;
-        padding: 12px 20px;
-        border-radius: 6px;
-        margin-top: 20px;
-      }
-      p {
-        color: #1f2937;
-        line-height: 1.5;
-      }
-    </style>
+    <meta charset="UTF-8">
+    <title>Bienvenido a {{ appName }}</title>
   </head>
-  <body>
-    <div class="container">
-      <h1>¡Hola {{ usuario.nombre }}!</h1>
-      <p>
-        Gracias por registrarte en To-Do App. A partir de ahora podrás organizar tus tareas
-        y compartirlas con tu equipo sin complicaciones.
-      </p>
-      <p>
-        Haz clic en el siguiente botón para acceder a tu panel e iniciar tu primera lista
-        de tareas.
-      </p>
-      <a class="cta" href="{{ frontend_url|default('https://todo-app.local/login') }}">
-        Ir a To-Do App
-      </a>
-      <p style="margin-top:24px;">
-        Si no esperabas este correo, ignóralo. Puedes escribirnos respondiendo a este mensaje si
-        necesitas ayuda.
-      </p>
-      <p style="margin-top:32px;color:#6b7280;">El equipo de To-Do App</p>
-    </div>
+  <body style="margin:0; padding:0; background-color: {{ theme.bg }}; font-family: Arial, Helvetica, sans-serif; color: {{ theme.text }};">
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background-color: {{ theme.bg }}; padding: 32px 16px;">
+      <tr>
+        <td align="center">
+          <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width: 640px; background-color: {{ theme.panel }}; border: 1px solid {{ theme.border }}; border-radius: 14px; overflow: hidden;">
+            <tr>
+              <td style="background: linear-gradient(135deg, {{ theme.primary }}, {{ theme.primaryDark }}); padding: 28px 32px; color: #ffffff;">
+                <p style="margin: 0; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; opacity: 0.9;">
+                  {{ appName }}
+                </p>
+                <h1 style="margin: 10px 0 0; font-size: 28px; line-height: 1.2; font-weight: 700;">
+                  Bienvenido, {{ usuario.nombre ?: usuario.email }}
+                </h1>
+              </td>
+            </tr>
+
+            <tr>
+              <td style="padding: 32px;">
+                <p style="margin: 0 0 16px; font-size: 16px; line-height: 1.6; color: {{ theme.muted }};">
+                  Tu cuenta se ha creado correctamente y ya está preparada para que empieces a organizar tus tareas de forma más clara y eficiente.
+                </p>
+
+                <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="margin: 24px 0; border: 1px solid {{ theme.border }}; border-radius: 12px;">
+                  <tr>
+                    <td style="padding: 18px 20px;">
+                      <p style="margin: 0 0 8px; font-size: 14px; color: {{ theme.muted }};">Correo de acceso</p>
+                      <p style="margin: 0; font-size: 16px; font-weight: 600; color: {{ theme.text }};">{{ usuario.email }}</p>
+                    </td>
+                  </tr>
+                </table>
+
+                <p style="margin: 0 0 20px; font-size: 15px; line-height: 1.6; color: {{ theme.muted }};">
+                  Ya puedes iniciar sesión y comenzar a gestionar tus tareas desde tu panel personal.
+                </p>
+
+                <a
+                  href="{{ frontend_url|default('http://localhost:4200/login') }}"
+                  style="display: inline-block; background-color: {{ theme.primary }}; color: #ffffff; text-decoration: none; padding: 12px 20px; border-radius: 10px; font-size: 14px; font-weight: 700;"
+                >
+                  Iniciar sesión
+                </a>
+
+                <p style="margin: 28px 0 0; font-size: 14px; line-height: 1.6; color: {{ theme.muted }};">
+                  Si no reconoces este registro o necesitas ayuda, puedes contactar con
+                  <strong>{{ supportEmail }}</strong>.
+                </p>
+              </td>
+            </tr>
+
+            <tr>
+              <td style="padding: 20px 32px; border-top: 1px solid {{ theme.border }}; background-color: #f8fafc;">
+                <p style="margin: 0; font-size: 12px; line-height: 1.5; color: {{ theme.muted }};">
+                  © {{ year }} {{ appName }}. Este mensaje ha sido generado automáticamente.
+                </p>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
   </body>
 </html>

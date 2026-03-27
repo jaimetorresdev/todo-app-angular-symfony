@@ -35,12 +35,17 @@ class UsuarioRepository extends ServiceEntityRepository implements PasswordUpgra
 
     public function buscarPorEmailONombre(?string $term): array
     {
-        if (!$term) return [];
-        $term = '%' . strtolower($term) . '%';
+        $qb = $this->createQueryBuilder('u');
 
-        return $this->createQueryBuilder('u')
-            ->andWhere('LOWER(u.email) LIKE :term OR LOWER(u.nombre) LIKE :term')
-            ->setParameter('term', $term)
+        if ($term) {
+            $term = '%' . strtolower($term) . '%';
+
+            $qb
+                ->andWhere('LOWER(u.email) LIKE :term OR LOWER(u.nombre) LIKE :term')
+                ->setParameter('term', $term);
+        }
+
+        return $qb
             ->orderBy('u.nombre', 'ASC')
             ->getQuery()
             ->getResult();

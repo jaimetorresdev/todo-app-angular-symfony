@@ -26,31 +26,47 @@ class NotificacionUsuario
 
     public function enviarBienvenida(Usuario $usuario): bool
     {
-        $context = [
-            'usuario' => $usuario,
-        ];
-
         return $this->enviarCorreo(
             usuario: $usuario,
-            asunto: 'Bienvenido a To-Do App',
+            asunto: 'Bienvenido a To-Do App · Tu cuenta ya está lista',
             template: self::TEMPLATE_BIENVENIDA,
-            contexto: $context
+            contexto: $this->buildBaseContext($usuario)
         );
     }
 
     public function enviarResetPassword(Usuario $usuario, string $passwordTemporal): bool
     {
-        $context = [
-            'usuario' => $usuario,
-            'passwordTemporal' => $passwordTemporal,
-        ];
-
         return $this->enviarCorreo(
             usuario: $usuario,
-            asunto: 'Instrucciones para restablecer tu contraseña',
+            asunto: 'To-Do App · Restablecimiento de contraseña',
             template: self::TEMPLATE_RESET_PASSWORD,
-            contexto: $context
+            contexto: array_merge(
+                $this->buildBaseContext($usuario),
+                [
+                    'passwordTemporal' => $passwordTemporal,
+                ]
+            )
         );
+    }
+
+    private function buildBaseContext(Usuario $usuario): array
+    {
+        return [
+            'usuario' => $usuario,
+            'appName' => 'To-Do App',
+            'supportEmail' => $this->fromEmail,
+            'year' => (int) date('Y'),
+            'theme' => [
+                'primary' => '#2563eb',
+                'primaryDark' => '#1d4ed8',
+                'accent' => '#0f172a',
+                'bg' => '#f8fafc',
+                'panel' => '#ffffff',
+                'text' => '#0f172a',
+                'muted' => '#475569',
+                'border' => '#e2e8f0',
+            ],
+        ];
     }
 
     private function enviarCorreo(
@@ -81,7 +97,7 @@ class NotificacionUsuario
                 'usuarioId' => $usuario->getId(),
                 'email' => $usuario->getEmail(),
                 'template' => $template,
-                'exception' => $exception,
+                'exceptionMessage' => $exception->getMessage(),
             ]);
 
             return false;

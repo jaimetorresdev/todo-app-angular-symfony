@@ -1,12 +1,11 @@
-<main class="mx-auto flex min-h-screen max-w-7xl flex-col justify-center gap-10 bg-white px-4 py-24 sm:px-8 sm:py-32 lg:px-16">
+<main class="mx-auto flex min-h-screen max-w-7xl flex-col justify-center gap-10 bg-white px-4 py-24 sm:px-8 sm:py-32 lg:px-16 dark:bg-slate-950">
   <app-page-title
     title="Gestiona tus tareas de forma eficiente"
     subtitle="Una aplicación ligera para crear, actualizar y completar tareas sin complicaciones."
   ></app-page-title>
 
-  <p class="text-base leading-7 text-slate-600 text-center sm:max-w-xl sm:text-left">
-    Esta landing será el punto de partida de la To-Do App. Más adelante añadiremos formularios,
-    autenticación y datos reales, pero hoy nos centramos en estructurar y reutilizar componentes.
+  <p class="text-center text-base leading-7 text-slate-600 dark:text-slate-300 sm:max-w-xl sm:text-left">
+    Organiza tus tareas diarias desde una interfaz clara, rápida y pensada para mejorar tu flujo de trabajo.
   </p>
 
   <div class="flex flex-col gap-4 sm:flex-row sm:items-center">
@@ -16,15 +15,21 @@
     >
       Comenzar ahora
     </a>
-
-    <span class="text-sm text-slate-500 sm:pl-4">
-      * Todavía no persistimos tareas. Ese flujo llegará en los ejercicios siguientes.
-    </span>
   </div>
 
   <div class="mt-6 flex items-center justify-center gap-4 text-sm sm:justify-start">
-    <a routerLink="/login" class="text-blue-600 hover:text-blue-700">Entrar</a>
-    <span class="text-slate-400">·</span>
-    <a routerLink="/register" class="text-slate-600 hover:text-slate-800">Registrarme</a>
+    <a
+      routerLink="/login"
+      class="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
+    >
+      Entrar
+    </a>
+    <span class="text-slate-400 dark:text-slate-500">·</span>
+    <a
+      routerLink="/register"
+      class="text-slate-600 hover:text-slate-800 dark:text-slate-300 dark:hover:text-slate-100"
+    >
+      Registrarme
+    </a>
   </div>
 </main>

@@ -1,42 +1,60 @@
+import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { ReactiveFormsModule, FormBuilder, Validators, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../shared/services/auth-service';
+import { ToastService } from '../../../shared/services/toast-service';
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink],
   templateUrl: './register-component.html',
 })
 export class RegisterComponent implements OnInit {
-  form!: FormGroup;
   loading = false;
+  form!: FormGroup;
 
   constructor(
-    private fb: FormBuilder,
-    private auth: AuthService,
-    private router: Router
+    private readonly fb: FormBuilder,
+    private readonly auth: AuthService,
+    private readonly toast: ToastService,
+    private readonly router: Router
   ) {}
 
   ngOnInit(): void {
     this.form = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
-      nombre: [''],
+      nombre: ['', [Validators.required]],
     });
   }
 
   onSubmit(): void {
-    if (this.form.invalid) {
+    if (this.form.invalid || this.loading) {
       this.form.markAllAsTouched();
       return;
     }
 
     this.loading = true;
-    this.auth.register(this.form.getRawValue() as any).subscribe({
-      next: () => this.router.navigateByUrl('/login'),
-      error: () => (this.loading = false),
+
+    const { email, password, nombre } = this.form.getRawValue();
+
+    this.auth.register({
+      email: email ?? '',
+      password: password ?? '',
+      nombre: nombre ?? '',
+    }).subscribe({
+      next: () => {
+        this.loading = false;
+        this.toast.success('Cuenta creada correctamente');
+        this.router.navigateByUrl('/login');
+      },
+      error: (err) => {
+        this.loading = false;
+        const msg = err?.error?.message || 'No se pudo crear la cuenta';
+        this.toast.error(msg);
+      },
     });
   }
 }
