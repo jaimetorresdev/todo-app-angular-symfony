@@ -9,12 +9,25 @@ export interface RegisterPayload {
   nombre?: string;
 }
 
+export interface UpdateProfilePayload {
+  nombre: string;
+  email: string;
+  currentPassword?: string;
+  newPassword?: string;
+}
+
 export interface AuthResponse {
   token: string;
 }
 
 export interface AuthenticatedUser {
   id: number;
+  nombre?: string | null;
   email: string;
   roles: string[];
+}
+
+export interface UpdateProfileResponse {
+  message: string;
+  user: AuthenticatedUser;
 }

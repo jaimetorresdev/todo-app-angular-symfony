@@ -1,7 +1,6 @@
 import { CanActivateFn, Router } from '@angular/router';
 import { inject } from '@angular/core';
 import { AuthStore } from '../shared/services/auth-store';
-import { ToastService } from '../shared/services/toast-service';
 
 function isTokenExpired(token: string): boolean {
   try {
@@ -12,23 +11,20 @@ function isTokenExpired(token: string): boolean {
   }
 }
 
-export const authGuard: CanActivateFn = () => {
+/**
+ * Guard para rutas públicas (landing, login, register).
+ * Si el usuario ya tiene sesión activa, lo redirige a su página de inicio.
+ */
+export const noAuthGuard: CanActivateFn = () => {
   const store = inject(AuthStore);
   const router = inject(Router);
-  const toast = inject(ToastService);
 
   const token = store.token();
 
   if (token && !isTokenExpired(token)) {
-    return true;
+    return router.createUrlTree(['/']);
   }
 
-  if (token) {
-    store.clearSession();
-    toast.info('Tu sesión ha expirado, inicia sesión de nuevo');
-  } else {
-    toast.info('Inicia sesión para continuar');
-  }
-
-  return router.createUrlTree(['/login']);
+  // Sin sesión válida: permitir acceso a la ruta pública
+  return true;
 };

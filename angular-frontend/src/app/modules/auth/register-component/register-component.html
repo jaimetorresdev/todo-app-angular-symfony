@@ -1,97 +1,256 @@
-<main class="mx-auto flex min-h-screen max-w-7xl items-center justify-center px-4 py-16 dark:bg-slate-950">
-  <section class="w-full max-w-md rounded-xl border bg-white p-8 shadow-sm dark:border-slate-700 dark:bg-slate-900">
-    <div class="mb-6">
-      <h1 class="text-3xl font-bold text-accent dark:text-slate-100">Crear cuenta</h1>
-      <p class="mt-2 text-sm text-slate-600 dark:text-slate-300">
-        Registra un nuevo usuario para acceder a la gestión de tareas y al resto de funcionalidades disponibles.
-      </p>
+<div class="flex min-h-screen bg-white dark:bg-slate-950">
+  <aside class="relative hidden overflow-hidden bg-blue-600 p-12 lg:flex lg:w-1/2 lg:flex-col lg:justify-between" aria-hidden="true">
+    <div class="absolute inset-0 opacity-10"
+      style="background-image: radial-gradient(circle at 25% 25%, #ffffff 1px, transparent 1px), radial-gradient(circle at 75% 75%, #ffffff 1px, transparent 1px); background-size: 48px 48px;">
     </div>
 
-    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-5">
-      <div>
-        <label for="email" class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200">Email</label>
-        <input
-          id="email"
-          type="email"
-          formControlName="email"
-          [ngClass]="{
-            'border-red-500 focus:ring-red-500': form.get('email')?.invalid && form.get('email')?.touched,
-            'border-slate-300 focus:ring-primary-600 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100': !(form.get('email')?.invalid && form.get('email')?.touched)
-          }"
-          class="h-10 w-full rounded-md border px-3 text-sm focus:outline-none focus:ring-2"
-        />
+    <div class="relative">
+      <a routerLink="/" class="text-2xl font-black tracking-tighter text-white">
+        Task<span class="opacity-70">Pro</span>
+      </a>
+    </div>
 
-        <p
-          *ngIf="form.get('email')?.hasError('required') && form.get('email')?.touched"
-          class="mt-1 text-sm text-red-600"
-        >
-          El email es obligatorio.
-        </p>
+    <div class="relative space-y-8">
+      <div class="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.22em] text-blue-100 backdrop-blur-sm">
+        <span class="h-2 w-2 rounded-full bg-emerald-400"></span>
+        Empieza gratis
+      </div>
 
-        <p
-          *ngIf="form.get('email')?.hasError('email') && form.get('email')?.touched"
-          class="mt-1 text-sm text-red-600"
-        >
-          Introduce un email válido.
+      <div class="space-y-4">
+        <h1 class="text-4xl font-black leading-tight text-white">
+          Organiza tu trabajo desde el primer minuto.
+        </h1>
+        <p class="max-w-xl text-base leading-7 text-blue-100">
+          Regístrate en menos de un minuto y entra a un espacio pensado para priorizar, avanzar y cerrar tareas sin fricción.
         </p>
       </div>
 
-      <div>
-        <label for="password" class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200">Contraseña</label>
-        <input
-          id="password"
-          type="password"
-          formControlName="password"
-          [ngClass]="{
-            'border-red-500 focus:ring-red-500': form.get('password')?.invalid && form.get('password')?.touched,
-            'border-slate-300 focus:ring-primary-600 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100': !(form.get('password')?.invalid && form.get('password')?.touched)
-          }"
-          class="h-10 w-full rounded-md border px-3 text-sm focus:outline-none focus:ring-2"
-        />
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div class="rounded-2xl bg-white/10 p-5 backdrop-blur-sm">
+            <p class="text-3xl font-black text-white">3</p>
+            <p class="mt-1 text-sm font-semibold text-white">Niveles de prioridad</p>
+            <p class="mt-2 text-sm text-blue-100">Distingue lo urgente, lo importante y lo que puede esperar.</p>
+          </div>
+          <div class="rounded-2xl bg-white/10 p-5 backdrop-blur-sm">
+            <p class="text-3xl font-black text-white">∞</p>
+            <p class="mt-1 text-sm font-semibold text-white">Tareas sin límite</p>
+            <p class="mt-2 text-sm text-blue-100">Crea y organiza tantas tareas como necesites desde el primer acceso.</p>
+          </div>
+        </div>
 
-        <p
-          *ngIf="form.get('password')?.hasError('required') && form.get('password')?.touched"
-          class="mt-1 text-sm text-red-600"
-        >
-          La contraseña es obligatoria.
-        </p>
-
-        <p
-          *ngIf="form.get('password')?.hasError('minlength') && form.get('password')?.touched"
-          class="mt-1 text-sm text-red-600"
-        >
-          La contraseña debe tener al menos 6 caracteres.
-        </p>
+      <div class="rounded-3xl border border-white/15 bg-white/10 p-6 backdrop-blur-sm">
+        <p class="text-xs font-bold uppercase tracking-[0.28em] text-blue-100/80">Qué encontrarás</p>
+        <ul class="mt-4 space-y-3 text-sm text-blue-50">
+          <li class="flex items-start gap-3">
+            <span class="mt-1 h-2 w-2 rounded-full bg-white"></span>
+            Un registro claro, directo y alineado con el resto de la experiencia.
+          </li>
+          <li class="flex items-start gap-3">
+            <span class="mt-1 h-2 w-2 rounded-full bg-white"></span>
+            Validación inmediata para evitar errores antes de enviar el formulario.
+          </li>
+          <li class="flex items-start gap-3">
+            <span class="mt-1 h-2 w-2 rounded-full bg-white"></span>
+            Una entrada rápida a TaskPro para empezar a trabajar sin rodeos.
+          </li>
+        </ul>
       </div>
+    </div>
 
-      <div>
-        <label for="nombre" class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200">Nombre</label>
-        <input
-          id="nombre"
-          type="text"
-          formControlName="nombre"
-          class="h-10 w-full rounded-md border border-slate-300 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary-600 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100"
-        />
-      </div>
+    <p class="relative text-sm text-blue-200">© 2026 TaskPro</p>
+  </aside>
 
-      <button
-        type="submit"
-        [disabled]="loading || form.invalid"
-        aria-label="Crear cuenta"
-        class="inline-flex h-10 items-center rounded-md bg-primary px-5 text-sm font-medium text-white transition hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-600 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
-      >
-        {{ loading ? 'Registrando...' : 'Registrarme' }}
-      </button>
+  <main class="flex flex-1 flex-col items-center justify-center px-6 py-16 sm:px-12">
+    <div class="mb-8 w-full max-w-xl lg:hidden">
+      <a routerLink="/"
+        class="inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 transition-colors hover:text-blue-600">
+        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
+        </svg>
+        Volver al inicio
+      </a>
+    </div>
 
-      <p class="text-sm text-slate-600 dark:text-slate-300">
-        ¿Ya tienes cuenta?
-        <a routerLink="/login" class="font-medium text-primary transition hover:text-primary-700">
-          Inicia sesión
-        </a>.
-        <a routerLink="/" class="ml-2 text-slate-600 transition hover:text-slate-800 dark:text-slate-300 dark:hover:text-slate-100">
-          Volver al inicio
-        </a>
+    <section class="w-full max-w-lg">
+      <p class="mb-8 text-xl font-black tracking-tighter text-slate-900 dark:text-white lg:hidden">
+        Task<span class="text-blue-600">Pro</span>
       </p>
-    </form>
-  </section>
-</main>
+
+      <header class="mb-8">
+        <div class="inline-flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.22em] text-blue-600 dark:border-blue-900 dark:bg-blue-950 dark:text-blue-300">
+          Crear cuenta
+        </div>
+        <h2 class="mt-5 text-3xl font-bold tracking-tight text-slate-900 dark:text-white">Empieza en TaskPro</h2>
+        <p class="mt-2 max-w-lg text-sm leading-6 text-slate-500 dark:text-slate-400">
+          Crea tu acceso para gestionar tareas, prioridades y fechas desde una interfaz clara, rápida y familiar.
+        </p>
+      </header>
+
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate class="space-y-5">
+        <div class="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
+          <div class="grid gap-5 p-6 sm:grid-cols-2 sm:p-7">
+            <div class="sm:col-span-2">
+              <label for="nombre" class="label">Nombre completo</label>
+              <input
+                id="nombre"
+                type="text"
+                formControlName="nombre"
+                autocomplete="name"
+                placeholder="Jaime Torres"
+                class="field h-12 rounded-2xl"
+                [class.field-error]="hasFieldError('nombre')"
+              />
+              @if (hasFieldError('nombre', 'required')) {
+                <p class="field-msg-error">Tu nombre es obligatorio.</p>
+              }
+            </div>
+
+            <div class="sm:col-span-2">
+              <label for="email" class="label">Correo electrónico</label>
+              <input
+                id="email"
+                type="email"
+                formControlName="email"
+                autocomplete="email"
+                placeholder="tu@email.com"
+                class="field h-12 rounded-2xl"
+                [class.field-error]="hasFieldError('email')"
+              />
+              @if (hasFieldError('email', 'required')) {
+                <p class="field-msg-error">El email es obligatorio.</p>
+              }
+              @if (hasFieldError('email', 'email')) {
+                <p class="field-msg-error">Introduce un email válido.</p>
+              }
+            </div>
+
+            <div class="sm:col-span-2">
+              <div class="mb-1.5 flex items-center justify-between gap-3">
+                <label for="password" class="label mb-0">Contraseña</label>
+                <button
+                  type="button"
+                  (click)="togglePasswordVisibility()"
+                  class="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400 transition hover:text-blue-600"
+                >
+                  {{ passwordVisible ? 'Ocultar' : 'Mostrar' }}
+                </button>
+              </div>
+              <input
+                id="password"
+                [type]="passwordVisible ? 'text' : 'password'"
+                formControlName="password"
+                autocomplete="new-password"
+                placeholder="Mínimo 6 caracteres"
+                class="field h-12 rounded-2xl"
+                [class.field-error]="hasFieldError('password')"
+              />
+
+              <div class="mt-3 rounded-2xl border border-slate-200/80 bg-slate-50/90 p-4 dark:border-slate-800 dark:bg-slate-950/40">
+                <div class="flex flex-wrap items-center justify-between gap-3">
+                  <div class="flex items-center gap-2">
+                    <span class="h-2 w-2 rounded-full bg-blue-500/70"></span>
+                    <p class="text-xs font-bold uppercase tracking-[0.24em] text-slate-400">Fortaleza</p>
+                  </div>
+                  <span
+                    class="rounded-full bg-white px-3 py-1 text-[11px] font-semibold shadow-sm dark:bg-slate-900"
+                    [ngClass]="passwordStrength.tone">
+                    {{ passwordStrength.label }}
+                  </span>
+                </div>
+
+                <div class="mt-3 h-1.5 overflow-hidden rounded-full bg-slate-200 dark:bg-slate-800">
+                  <div
+                    class="h-full rounded-full bg-gradient-to-r from-rose-500 via-amber-400 to-emerald-500 transition-all duration-300"
+                    [class]="passwordStrength.width"
+                  ></div>
+                </div>
+
+                <div class="mt-3 flex flex-wrap gap-2">
+                  @for (requirement of passwordRequirements; track requirement.label) {
+                    <span
+                      class="inline-flex items-center rounded-full px-3 py-1.5 text-xs font-medium transition-colors"
+                      [ngClass]="requirement.met
+                        ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-950/40 dark:text-emerald-300'
+                        : 'bg-slate-200 text-slate-500 dark:bg-slate-800 dark:text-slate-400'">
+                      <span
+                        class="mr-2 h-1.5 w-1.5 rounded-full"
+                        [ngClass]="requirement.met ? 'bg-emerald-500' : 'bg-slate-400 dark:bg-slate-500'">
+                      </span>
+                      {{ requirement.label }}
+                    </span>
+                  }
+                </div>
+              </div>
+
+              @if (hasFieldError('password', 'required')) {
+                <p class="field-msg-error">La contraseña es obligatoria.</p>
+              }
+              @if (hasFieldError('password', 'minlength')) {
+                <p class="field-msg-error">Usa al menos 6 caracteres.</p>
+              }
+            </div>
+
+            <div class="sm:col-span-2">
+              <label for="confirmPassword" class="label">Confirmar contraseña</label>
+              <input
+                id="confirmPassword"
+                [type]="passwordVisible ? 'text' : 'password'"
+                formControlName="confirmPassword"
+                autocomplete="new-password"
+                placeholder="Repite tu contraseña"
+                class="field h-12 rounded-2xl"
+                [class.field-error]="hasFieldError('confirmPassword') || hasPasswordMismatch()"
+              />
+              @if (hasFieldError('confirmPassword', 'required')) {
+                <p class="field-msg-error">Confirma tu contraseña para continuar.</p>
+              }
+              @if (hasPasswordMismatch()) {
+                <p class="field-msg-error">Las contraseñas no coinciden.</p>
+              }
+              @if (hasPasswordMatch()) {
+                <p class="mt-1.5 text-xs font-medium text-emerald-600 dark:text-emerald-400">Las contraseñas coinciden.</p>
+              }
+            </div>
+          </div>
+
+          <div class="section-divider bg-slate-50/90 px-6 py-5 dark:bg-slate-950/40 sm:px-7">
+            <div class="flex items-start gap-3">
+              <div class="flex h-10 w-10 items-center justify-center rounded-2xl bg-white text-blue-600 shadow-sm dark:bg-slate-800 dark:text-blue-400">
+                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                </svg>
+              </div>
+              <div>
+                <p class="text-sm font-semibold text-slate-800 dark:text-slate-100">Todo listo en unos segundos</p>
+                <p class="mt-1 text-sm leading-6 text-slate-500 dark:text-slate-400">
+                  Cuando completes el registro te llevamos al login para entrar con tus credenciales nuevas.
+                </p>
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              [disabled]="loading"
+              class="mt-5 h-12 w-full rounded-2xl bg-blue-600 text-sm font-bold text-white shadow-sm shadow-blue-600/20 transition-all hover:bg-blue-700 active:scale-95 disabled:cursor-not-allowed disabled:opacity-60 disabled:active:scale-100"
+            >
+              {{ loading ? 'Creando cuenta...' : 'Crear cuenta' }}
+            </button>
+          </div>
+        </div>
+      </form>
+
+      <div class="mt-8 border-t border-slate-100 pt-6 text-center dark:border-slate-800">
+        <p class="text-sm text-slate-500 dark:text-slate-400">
+          ¿Ya tienes cuenta?
+          <a routerLink="/login" class="ml-1 font-semibold text-blue-600 transition-colors hover:text-blue-700 dark:text-blue-400">
+            Inicia sesión
+          </a>
+        </p>
+        <a routerLink="/"
+          class="mt-4 hidden text-xs font-medium text-slate-400 transition-colors hover:text-slate-600 dark:hover:text-slate-300 lg:inline-block">
+          ← Volver al inicio
+        </a>
+      </div>
+    </section>
+  </main>
+</div>

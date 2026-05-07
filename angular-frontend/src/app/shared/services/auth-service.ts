@@ -6,6 +6,8 @@ import {
   RegisterPayload,
   AuthResponse,
   AuthenticatedUser,
+  UpdateProfilePayload,
+  UpdateProfileResponse,
 } from '../interfaces/auth';
 
 @Injectable({ providedIn: 'root' })
@@ -25,6 +27,10 @@ export class AuthService {
 
   me(): Observable<AuthenticatedUser> {
     return this.http.get<AuthenticatedUser>(`${this.API}/me`);
+  }
+
+  updateProfile(payload: UpdateProfilePayload): Observable<UpdateProfileResponse> {
+    return this.http.patch<UpdateProfileResponse>(`${this.API}/me`, payload);
   }
 
   getToken(): string | null {

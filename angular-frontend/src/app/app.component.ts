@@ -3,11 +3,12 @@ import { RouterOutlet } from '@angular/router';
 import { ToastComponent } from './shared/components/toast-component/toast-component';
 import { AuthStore } from './shared/services/auth-store';
 import { NavbarComponent } from './shared/components/navbar-component/navbar-component';
+import { ConfirmModalComponent } from './shared/components/confirm-modal/confirm-modal.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [NavbarComponent, RouterOutlet, ToastComponent],
+  imports: [NavbarComponent, RouterOutlet, ToastComponent, ConfirmModalComponent],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
 })

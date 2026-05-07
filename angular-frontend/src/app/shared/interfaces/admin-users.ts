@@ -14,5 +14,21 @@ export interface CreateUserPayload {
 
 export interface ResetPasswordResponse {
   message: string;
-  passwordTemporal: string;
+  usuario: AdminUser;
+}
+
+export interface UpdateUserPayload {
+  nombre?: string;
+  email?: string;
+  roles?: string[];
+}
+
+export interface PaginatedUsersResponse {
+  data: AdminUser[];
+  meta: {
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  };
 }

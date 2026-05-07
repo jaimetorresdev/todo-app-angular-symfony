@@ -1,192 +1,1089 @@
-<main class="mx-auto max-w-7xl px-4 py-10 dark:bg-slate-950">
-  <div class="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-    <div>
-      <h1 class="text-3xl font-bold text-accent dark:text-slate-100">Panel de administración</h1>
-      <p class="mt-2 text-sm text-slate-600 dark:text-slate-300">
-        Gestiona usuarios, permisos y credenciales temporales desde un único panel.
-      </p>
+<div class="flex flex-col min-h-screen bg-slate-50 dark:bg-slate-950">
+
+  <!-- ── Header con gradiente ── -->
+  <div class="relative overflow-hidden
+    bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800
+    dark:from-slate-900 dark:via-slate-900 dark:to-slate-900
+    border-b border-transparent dark:border-slate-800
+    px-6 pt-4 pb-4 sm:px-10 mb-5">
+
+    <!-- Orbes decorativos -->
+    <div class="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
+      <div class="absolute -top-24 -right-24 h-80 w-80 rounded-full bg-white/5 blur-3xl"></div>
+      <div class="absolute -bottom-16 -left-16 h-64 w-64 rounded-full bg-indigo-500/15 dark:bg-blue-900/10 blur-3xl"></div>
     </div>
 
-    <div class="flex items-center gap-3">
-      <span class="text-sm text-slate-500 dark:text-slate-300">
-        {{ store.user()?.email }}
-      </span>
+    <div class="relative z-10">
+      <div class="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-widest mb-3
+        bg-white/10 border border-white/20 text-blue-100
+        dark:bg-blue-950/60 dark:border-blue-800/60 dark:text-blue-300
+        backdrop-blur-sm">
+        <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+        </svg>
+        Admin
+      </div>
+      <h1 class="text-xl font-black tracking-tight text-white dark:text-slate-100 sm:text-2xl">Panel de Administración</h1>
+      <p class="mt-0.5 text-xs text-blue-200/70 dark:text-slate-500 hidden sm:block">Gestiona usuarios, tareas y permisos desde un entorno centralizado.</p>
     </div>
   </div>
 
-  <section class="rounded-lg border bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-900">
-    <h2 class="mb-4 text-lg font-semibold text-accent dark:text-slate-100">Crear usuario</h2>
+  <div class="flex-1 px-4 pb-8 sm:px-6">
 
-    <form [formGroup]="createForm" (ngSubmit)="onCreateUser()" class="grid grid-cols-1 gap-4 md:grid-cols-2">
-      <div>
-        <label for="email" class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200">Email</label>
-        <input
-          id="email"
-          type="email"
-          formControlName="email"
-          [ngClass]="{
-            'border-red-500 focus:ring-red-500': createForm.get('email')?.invalid && createForm.get('email')?.touched,
-            'border-slate-300 focus:ring-primary-600 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100': !(createForm.get('email')?.invalid && createForm.get('email')?.touched)
-          }"
-          class="h-10 w-full rounded-md border px-3 text-sm focus:outline-none focus:ring-2"
-        />
+  <!-- ── Layout: sidebar + contenido ── -->
+  <div class="flex gap-5 items-start">
 
-        <p
-          *ngIf="createForm.get('email')?.hasError('required') && createForm.get('email')?.touched"
-          class="mt-1 text-sm text-red-600"
-        >
-          El email es obligatorio.
-        </p>
+    <!-- ════════════════════════ -->
+    <!--      SIDEBAR STICKY      -->
+    <!-- ════════════════════════ -->
+    <aside class="hidden md:flex flex-col gap-0.5 w-44 flex-shrink-0 sticky top-20">
+      <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 px-3 mb-3">Secciones</p>
 
-        <p
-          *ngIf="createForm.get('email')?.hasError('email') && createForm.get('email')?.touched"
-          class="mt-1 text-sm text-red-600"
-        >
-          Introduce un email válido.
-        </p>
-      </div>
+      <!-- Usuarios -->
+      <button type="button" (click)="scrollToSection('usuarios')"
+        class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-bold text-left transition-all"
+        [ngClass]="activeSection === 'usuarios' ? 'bg-blue-50 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400' : 'text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800/60'">
+        <span class="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-lg transition-all"
+          [ngClass]="activeSection === 'usuarios' ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'">
+          <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
+          </svg>
+        </span>
+        Usuarios
+      </button>
 
-      <div>
-        <label for="password" class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200">Contraseña</label>
-        <input
-          id="password"
-          type="password"
-          formControlName="password"
-          [ngClass]="{
-            'border-red-500 focus:ring-red-500': createForm.get('password')?.invalid && createForm.get('password')?.touched,
-            'border-slate-300 focus:ring-primary-600 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100': !(createForm.get('password')?.invalid && createForm.get('password')?.touched)
-          }"
-          class="h-10 w-full rounded-md border px-3 text-sm focus:outline-none focus:ring-2"
-        />
+      <!-- Tareas -->
+      <button type="button" (click)="scrollToSection('tareas')"
+        class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-bold text-left transition-all"
+        [ngClass]="activeSection === 'tareas' ? 'bg-blue-50 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400' : 'text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800/60'">
+        <span class="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-lg transition-all"
+          [ngClass]="activeSection === 'tareas' ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'">
+          <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+          </svg>
+        </span>
+        Tareas
+      </button>
 
-        <p
-          *ngIf="createForm.get('password')?.hasError('required') && createForm.get('password')?.touched"
-          class="mt-1 text-sm text-red-600"
-        >
-          La contraseña es obligatoria.
-        </p>
+      <!-- Estadísticas -->
+      <button type="button" (click)="scrollToSection('estadisticas')"
+        class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-bold text-left transition-all"
+        [ngClass]="activeSection === 'estadisticas' ? 'bg-blue-50 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400' : 'text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800/60'">
+        <span class="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-lg transition-all"
+          [ngClass]="activeSection === 'estadisticas' ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'">
+          <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+          </svg>
+        </span>
+        Estadísticas
+      </button>
 
-        <p
-          *ngIf="createForm.get('password')?.hasError('minlength') && createForm.get('password')?.touched"
-          class="mt-1 text-sm text-red-600"
-        >
-          La contraseña debe tener al menos 6 caracteres.
-        </p>
-      </div>
+      <!-- Actividad -->
+      <button type="button" (click)="scrollToSection('actividad')"
+        class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-bold text-left transition-all"
+        [ngClass]="activeSection === 'actividad' ? 'bg-blue-50 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400' : 'text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800/60'">
+        <span class="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-lg transition-all"
+          [ngClass]="activeSection === 'actividad' ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'">
+          <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+        </span>
+        Actividad
+      </button>
+    </aside>
 
-      <div>
-        <label for="nombre" class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200">Nombre</label>
-        <input
-          id="nombre"
-          type="text"
-          formControlName="nombre"
-          class="h-10 w-full rounded-md border border-slate-300 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary-600 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100"
-        />
-      </div>
+    <!-- ════════════════════════ -->
+    <!--    CONTENIDO PRINCIPAL   -->
+    <!-- ════════════════════════ -->
+    <div class="flex-1 min-w-0 space-y-4">
 
-      <div class="flex items-center">
-        <label class="inline-flex items-center gap-2 text-sm text-slate-700 dark:text-slate-200">
-          <input type="checkbox" formControlName="isAdmin" />
-          Crear como administrador
-        </label>
-      </div>
+      <!-- ══════════════════════════════════════════ -->
+      <!--             CARD USUARIOS                  -->
+      <!-- ══════════════════════════════════════════ -->
+      <section id="usuarios" class="scroll-mt-20 rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-900 overflow-hidden">
 
-      <div class="md:col-span-2">
-        <button
-          type="submit"
-          [disabled]="creatingUser"
-          aria-label="Crear nuevo usuario"
-          class="inline-flex h-10 items-center rounded-md bg-primary px-4 text-sm font-medium text-white transition hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-600 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
-        >
-          {{ creatingUser ? 'Creando...' : 'Crear usuario' }}
-        </button>
-      </div>
-    </form>
-  </section>
+        <!-- Cabecera — uniforme con gradiente -->
+        <div class="relative overflow-hidden border-b border-slate-100 dark:border-slate-800">
+          <div class="absolute inset-0 bg-gradient-to-r from-blue-50 via-white to-indigo-50/30 dark:from-blue-950/20 dark:via-slate-900 dark:to-indigo-950/10 pointer-events-none"></div>
+          <div class="relative flex items-center justify-between gap-4 px-5 py-3.5">
+            <div class="flex items-center gap-4">
+              <span class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-blue-600 text-white shadow-lg shadow-blue-600/30">
+                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
+                </svg>
+              </span>
+              <div>
+                <h2 class="text-base font-black tracking-tight text-slate-900 dark:text-slate-100">Gestión de Usuarios</h2>
+                <p class="text-xs text-slate-500 dark:text-slate-400">Crea, busca y administra las cuentas del sistema.</p>
+              </div>
+            </div>
+            <button type="button" (click)="showCreateUserForm = !showCreateUserForm"
+              class="inline-flex flex-shrink-0 items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-bold transition-all active:scale-95"
+              [ngClass]="showCreateUserForm
+                ? 'bg-slate-100 text-slate-700 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-200'
+                : 'bg-blue-600 text-white shadow-lg shadow-blue-600/25 hover:bg-blue-700'">
+              <svg class="h-4 w-4 transition-transform duration-200" [class.rotate-45]="showCreateUserForm" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/>
+              </svg>
+              {{ showCreateUserForm ? 'Cerrar' : 'Nuevo usuario' }}
+            </button>
+          </div>
+        </div>
 
-  <section class="mt-8 rounded-lg border bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-900">
-    <h2 class="mb-4 text-lg font-semibold text-accent dark:text-slate-100">Buscar usuarios</h2>
+        <!-- Formulario crear usuario -->
+        <div *ngIf="showCreateUserForm"
+          class="border-b border-blue-100 dark:border-blue-900/40 bg-gradient-to-b from-blue-50/70 to-white dark:from-blue-950/10 dark:to-slate-900 px-6 py-5">
+          <p class="mb-4 text-[10px] font-black uppercase tracking-widest text-blue-500 dark:text-blue-400">Nuevo usuario</p>
+          <form [formGroup]="createForm" (ngSubmit)="onCreateUser()" class="grid grid-cols-1 gap-5 md:grid-cols-2">
+            <div>
+              <label for="email" class="block text-[11px] font-bold uppercase tracking-widest text-slate-600 dark:text-slate-400 mb-2">Correo <span class="text-red-500">*</span></label>
+              <input id="email" type="email" formControlName="email" placeholder="usuario@ejemplo.com"
+                [ngClass]="{ 'border-red-400': createForm.get('email')?.invalid && createForm.get('email')?.touched, 'border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-800': !(createForm.get('email')?.invalid && createForm.get('email')?.touched) }"
+                class="h-10 w-full rounded-xl border px-4 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-4 focus:ring-blue-500/10 transition"/>
+              <p *ngIf="createForm.get('email')?.hasError('required') && createForm.get('email')?.touched" class="mt-1.5 text-xs font-semibold text-red-500">El email es obligatorio.</p>
+              <p *ngIf="createForm.get('email')?.hasError('email') && createForm.get('email')?.touched" class="mt-1.5 text-xs font-semibold text-red-500">Introduce un email válido.</p>
+            </div>
+            <div>
+              <label for="password" class="block text-[11px] font-bold uppercase tracking-widest text-slate-600 dark:text-slate-400 mb-2">Contraseña <span class="text-red-500">*</span></label>
+              <input id="password" type="password" formControlName="password" placeholder="Mínimo 6 caracteres"
+                [ngClass]="{ 'border-red-400': createForm.get('password')?.invalid && createForm.get('password')?.touched, 'border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-800': !(createForm.get('password')?.invalid && createForm.get('password')?.touched) }"
+                class="h-10 w-full rounded-xl border px-4 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-4 focus:ring-blue-500/10 transition"/>
+              <p *ngIf="createForm.get('password')?.hasError('required') && createForm.get('password')?.touched" class="mt-1.5 text-xs font-semibold text-red-500">La contraseña es obligatoria.</p>
+              <p *ngIf="createForm.get('password')?.hasError('minlength') && createForm.get('password')?.touched" class="mt-1.5 text-xs font-semibold text-red-500">Mínimo 6 caracteres.</p>
+            </div>
+            <div>
+              <label for="nombre" class="block text-[11px] font-bold uppercase tracking-widest text-slate-600 dark:text-slate-400 mb-2">Nombre completo</label>
+              <input id="nombre" type="text" formControlName="nombre" placeholder="Nombre del usuario"
+                class="h-10 w-full rounded-xl border border-slate-200 bg-white px-4 text-sm text-slate-900 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition"/>
+            </div>
+            <div class="flex items-center pt-4">
+              <label class="flex items-center gap-3 cursor-pointer group select-none">
+                <input type="checkbox" formControlName="isAdmin" class="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500/20"/>
+                <span class="text-sm font-bold text-slate-700 dark:text-slate-200 group-hover:text-blue-600 transition">Dar permisos de administrador</span>
+              </label>
+            </div>
+            <div class="md:col-span-2 flex justify-end gap-3 pt-3 border-t border-slate-100 dark:border-slate-800">
+              <button type="button" (click)="showCreateUserForm = false" [disabled]="creatingUser"
+                class="h-9 px-5 rounded-xl border border-slate-200 text-sm font-bold text-slate-600 hover:bg-slate-50 transition-all disabled:opacity-50 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800">Cancelar</button>
+              <button type="submit" [disabled]="creatingUser"
+                class="inline-flex items-center gap-2 h-9 px-6 rounded-xl bg-blue-600 text-sm font-bold text-white shadow-lg shadow-blue-600/20 hover:bg-blue-700 active:scale-95 transition-all disabled:opacity-60">
+                <svg *ngIf="creatingUser" class="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                </svg>
+                {{ creatingUser ? 'Registrando…' : 'Registrar Usuario' }}
+              </button>
+            </div>
+          </form>
+        </div>
 
-    <div class="flex flex-col gap-3 md:flex-row md:items-start">
-      <div class="relative w-full md:max-w-md">
-        <input
-          type="text"
-          [(ngModel)]="search"
-          name="search"
-          (input)="updateSuggestions()"
-          (focus)="updateSuggestions()"
-          placeholder="Buscar por email o nombre"
-          autocomplete="off"
-          class="h-10 w-full rounded-md border border-slate-300 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary-600 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100"
-        />
+        <!-- ── Filtro de usuarios mejorado ── -->
+        <div class="border-b border-slate-100 dark:border-slate-800 px-6 py-4">
+          <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:gap-3">
 
-        <div
-          *ngIf="search.trim() && filteredSuggestions.length > 0"
-          class="absolute z-20 mt-1 w-full overflow-hidden rounded-md border border-slate-200 bg-white shadow-lg dark:border-slate-700 dark:bg-slate-800"
-        >
-          <button
-            *ngFor="let user of filteredSuggestions"
-            type="button"
-            (click)="selectSuggestion(user)"
-            class="block w-full border-b border-slate-100 px-3 py-2 text-left text-sm text-slate-700 hover:bg-slate-50 last:border-b-0 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-700"
-          >
-            <span class="font-medium">{{ user.nombre || 'Sin nombre' }}</span>
-            <span class="ml-2 text-slate-500 dark:text-slate-400">{{ user.email }}</span>
+            <!-- Buscador -->
+            <div class="relative flex-1">
+              <label class="block text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-1.5">Buscar usuario</label>
+              <div class="relative">
+                <svg class="absolute inset-y-0 left-3 my-auto h-3.5 w-3.5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M17 11A6 6 0 115 11a6 6 0 0112 0z"/>
+                </svg>
+                <input type="text" [(ngModel)]="search" (input)="onSearchInput()" (focus)="updateSuggestions()"
+                  placeholder="Email o nombre…"
+                  class="h-9 w-full rounded-xl border border-slate-200 bg-white pl-9 pr-9 text-sm text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/10 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 transition"/>
+                <button *ngIf="search" type="button" (click)="search = ''; onSearchInput()"
+                  class="absolute inset-y-0 right-2.5 my-auto flex h-5 w-5 items-center justify-center rounded-full text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition dark:hover:bg-slate-700">
+                  <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                  </svg>
+                </button>
+              </div>
+              <!-- Autocomplete -->
+              <div *ngIf="search.trim() && filteredSuggestions.length > 0"
+                class="absolute z-20 mt-1 w-full overflow-hidden rounded-xl border border-slate-200 bg-white shadow-2xl dark:border-slate-700 dark:bg-slate-800">
+                <button *ngFor="let user of filteredSuggestions; trackBy: trackByUserId" type="button" (click)="selectSuggestion(user)"
+                  class="flex w-full items-center gap-3 border-b border-slate-50 dark:border-slate-700 px-4 py-2.5 text-left hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors last:border-0">
+                  <span class="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-blue-100 text-xs font-black text-blue-600 dark:bg-blue-900/30 dark:text-blue-400">
+                    {{ (user.nombre || user.email || '?').charAt(0).toUpperCase() }}
+                  </span>
+                  <div class="min-w-0">
+                    <p class="text-sm font-bold text-slate-900 dark:text-slate-100 truncate">{{ user.nombre || 'Sin nombre' }}</p>
+                    <p class="text-xs text-slate-400 truncate">{{ user.email }}</p>
+                  </div>
+                </button>
+              </div>
+            </div>
+
+            <!-- Filtro por rol -->
+            <div class="flex-shrink-0">
+              <label class="block text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-1.5">Rol</label>
+              <div class="flex rounded-xl border border-slate-200 overflow-hidden dark:border-slate-700">
+                <button type="button" (click)="roleFilter = 'all'"
+                  class="px-3.5 py-2 text-xs font-bold transition-all"
+                  [ngClass]="roleFilter === 'all'
+                    ? 'bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900'
+                    : 'text-slate-500 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800'">
+                  Todos
+                </button>
+                <button type="button" (click)="roleFilter = 'admin'"
+                  class="px-3.5 py-2 text-xs font-bold border-l border-slate-200 transition-all dark:border-slate-700"
+                  [ngClass]="roleFilter === 'admin'
+                    ? 'bg-amber-500 text-white'
+                    : 'text-slate-500 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800'">
+                  Admin
+                </button>
+                <button type="button" (click)="roleFilter = 'user'"
+                  class="px-3.5 py-2 text-xs font-bold border-l border-slate-200 transition-all dark:border-slate-700"
+                  [ngClass]="roleFilter === 'user'
+                    ? 'bg-blue-600 text-white'
+                    : 'text-slate-500 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800'">
+                  Usuario
+                </button>
+              </div>
+            </div>
+
+            <!-- Botón buscar -->
+            <button type="button" (click)="onSearch()"
+              class="h-9 flex-shrink-0 inline-flex items-center gap-2 px-5 rounded-xl bg-blue-600 text-sm font-bold text-white hover:bg-blue-700 shadow-md shadow-blue-600/20 transition-all active:scale-95">
+              <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M17 11A6 6 0 115 11a6 6 0 0112 0z"/>
+              </svg>
+              Buscar
+            </button>
+          </div>
+        </div>
+
+        <!-- Tabla -->
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="bg-slate-50/70 dark:bg-slate-800/30">
+                <th class="px-6 py-3.5 text-[10px] font-black uppercase tracking-widest text-slate-400 border-b border-slate-100 dark:border-slate-800 dark:text-slate-500">ID</th>
+                <th class="px-6 py-3.5 text-[10px] font-black uppercase tracking-widest text-slate-400 border-b border-slate-100 dark:border-slate-800 dark:text-slate-500">Usuario</th>
+                <th class="px-6 py-3.5 text-[10px] font-black uppercase tracking-widest text-slate-400 border-b border-slate-100 dark:border-slate-800 dark:text-slate-500 text-center">Permisos</th>
+                <th class="px-6 py-3.5 text-[10px] font-black uppercase tracking-widest text-slate-400 border-b border-slate-100 dark:border-slate-800 dark:text-slate-500 text-right">Acciones</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+              <tr *ngFor="let user of filteredUsers; trackBy: trackByUserId" class="hover:bg-slate-50/60 dark:hover:bg-slate-800/30 transition-colors">
+                <td class="px-6 py-4 text-sm font-mono text-slate-400">#{{ user.id }}</td>
+                <td class="px-6 py-4">
+                  <div class="flex items-center gap-3">
+                    <span class="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-blue-100 text-xs font-black text-blue-600 dark:bg-blue-900/30 dark:text-blue-400">
+                      {{ (user.nombre || user.email || '?').charAt(0).toUpperCase() }}
+                    </span>
+                    <div>
+                      <p class="text-sm font-bold text-slate-900 dark:text-slate-100">{{ user.nombre || 'N/A' }}</p>
+                      <p class="text-xs text-slate-400">{{ user.email }}</p>
+                    </div>
+                  </div>
+                </td>
+                <td class="px-6 py-4">
+                  <div class="flex flex-wrap justify-center gap-1.5">
+                    <span *ngFor="let role of user.roles; trackBy: trackByIndex"
+                      [ngClass]="role === 'ROLE_ADMIN' ? 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-900/20 dark:text-amber-400 dark:border-amber-800' : 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-900/20 dark:text-blue-400 dark:border-blue-800'"
+                      class="text-[9px] font-black px-2.5 py-0.5 rounded-full border uppercase tracking-tight">
+                      {{ role.replace('ROLE_', '') }}
+                    </span>
+                  </div>
+                </td>
+                <td class="px-6 py-4 text-right">
+                  <div class="flex justify-end gap-2">
+                    <button (click)="openEditUser(user)" [disabled]="deletingUserId === user.id || savingUser"
+                      class="text-xs font-bold text-slate-600 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 px-3 py-1.5 rounded-lg transition-all dark:bg-slate-700 dark:text-slate-300 dark:hover:bg-slate-600 disabled:opacity-50">
+                      Editar
+                    </button>
+                    <button (click)="onResetPassword(user)" [disabled]="resettingUserId === user.id"
+                      class="text-xs font-bold text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-lg transition-all dark:bg-blue-900/30 dark:text-blue-400 dark:hover:bg-blue-900/50 disabled:opacity-50">
+                      {{ resettingUserId === user.id ? 'Reseteando…' : 'Resetear contraseña' }}
+                    </button>
+                    <button (click)="onDeleteUser(user)" [disabled]="deletingUserId === user.id"
+                      class="text-xs font-bold text-red-600 hover:text-red-800 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-lg transition-all dark:bg-red-900/30 dark:text-red-400 dark:hover:bg-red-900/50 disabled:opacity-50">
+                      {{ deletingUserId === user.id ? 'Eliminando…' : 'Eliminar' }}
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Estado vacío -->
+        <div *ngIf="!loadingUsers && users.length === 0" class="flex flex-col items-center py-14 text-center">
+          <span class="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800">
+            <svg class="h-5 w-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
+            </svg>
+          </span>
+          <p class="text-sm font-bold text-slate-500 dark:text-slate-400">No hay usuarios registrados</p>
+          <p class="mt-1 text-xs text-slate-400">Crea el primer usuario con el botón de arriba.</p>
+        </div>
+
+        <!-- Paginación -->
+        <div *ngIf="totalPages > 1" class="flex items-center justify-between border-t border-slate-100 dark:border-slate-800 px-6 py-4">
+          <p class="text-sm text-slate-500 dark:text-slate-400">
+            {{ (currentPage - 1) * PAGE_SIZE + 1 }}–{{ pageEnd }} de {{ totalUsers }} usuarios
+          </p>
+          <nav class="flex items-center gap-1.5">
+            <button type="button" (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 1"
+              class="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 text-sm text-slate-600 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-40 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800">‹</button>
+            @for (page of [].constructor(totalPages); track $index) {
+              <button type="button" (click)="goToPage($index + 1)"
+                [ngClass]="currentPage === $index + 1 ? 'bg-blue-600 text-white border-blue-600' : 'border-slate-200 text-slate-600 hover:bg-slate-100 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800'"
+                class="flex h-8 w-8 items-center justify-center rounded-lg border text-sm font-medium transition">
+                {{ $index + 1 }}
+              </button>
+            }
+            <button type="button" (click)="goToPage(currentPage + 1)" [disabled]="currentPage === totalPages"
+              class="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 text-sm text-slate-600 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-40 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800">›</button>
+          </nav>
+        </div>
+      </section>
+
+      <!-- ══════════════════════════════════════════ -->
+      <!--                 CARD TAREAS               -->
+      <!-- ══════════════════════════════════════════ -->
+      <section id="tareas" class="scroll-mt-20 rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-900 overflow-hidden">
+
+        <!-- Cabecera con gradiente -->
+        <div class="relative overflow-hidden border-b border-slate-100 dark:border-slate-800">
+          <div class="absolute inset-0 bg-gradient-to-r from-blue-50 via-white to-indigo-50/30 dark:from-blue-950/20 dark:via-slate-900 dark:to-indigo-950/10 pointer-events-none"></div>
+          <div class="relative flex items-center justify-between gap-4 px-5 py-3.5">
+            <div class="flex items-center gap-4">
+              <span class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-blue-600 text-white shadow-lg shadow-blue-600/30">
+                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+                </svg>
+              </span>
+              <div>
+                <h2 class="text-base font-black tracking-tight text-slate-900 dark:text-slate-100">Gestión de Tareas</h2>
+                <p class="text-xs text-slate-500 dark:text-slate-400">Crea, filtra y organiza todas las tareas del sistema.</p>
+              </div>
+            </div>
+            <button type="button" (click)="showCreateTaskForm = !showCreateTaskForm"
+              class="inline-flex flex-shrink-0 items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-bold transition-all active:scale-95"
+              [ngClass]="showCreateTaskForm
+                ? 'bg-slate-100 text-slate-700 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-200'
+                : 'bg-blue-600 text-white shadow-lg shadow-blue-600/25 hover:bg-blue-700'">
+              <svg class="h-4 w-4 transition-transform duration-200" [class.rotate-45]="showCreateTaskForm"
+                fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/>
+              </svg>
+              {{ showCreateTaskForm ? 'Cerrar' : 'Nueva tarea' }}
+            </button>
+          </div>
+        </div>
+
+        <!-- Formulario crear tarea -->
+        <div *ngIf="showCreateTaskForm"
+          class="border-b border-blue-100 dark:border-blue-900/40 bg-gradient-to-b from-blue-50/70 to-white dark:from-blue-950/10 dark:to-slate-900 px-6 py-5">
+          <p class="mb-4 text-[10px] font-black uppercase tracking-widest text-blue-500 dark:text-blue-400">Nueva tarea</p>
+          <app-task-form-component
+            [submitting]="creatingTask"
+            [showCancel]="true"
+            [users]="allUsers"
+            submitLabel="Crear tarea"
+            (submitted)="onTaskSubmitted($event)"
+            (cancelled)="showCreateTaskForm = false"
+          ></app-task-form-component>
+        </div>
+
+        <div class="px-4 pb-4 pt-3">
+          <app-task-list-component
+            defaultView="kanban"
+            [hideViewToggle]="false"
+            [users]="allUsers"
+            (taskDeleted)="onTaskDeleted($event)"
+            (taskUpdated)="onTaskUpdated($event)"
+            (taskStatusChanged)="onTaskStatusChanged($event)"
+          ></app-task-list-component>
+        </div>
+
+      </section>
+
+      <!-- ══════════════════════════════════════════ -->
+      <!--            CARD ESTADÍSTICAS               -->
+      <!-- ══════════════════════════════════════════ -->
+      <section id="estadisticas" class="scroll-mt-20 rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-900 overflow-hidden">
+
+        <!-- Cabecera con gradiente -->
+        <div class="relative overflow-hidden border-b border-slate-100 dark:border-slate-800">
+          <div class="absolute inset-0 bg-gradient-to-r from-blue-50 via-white to-indigo-50/30 dark:from-blue-950/20 dark:via-slate-900 dark:to-indigo-950/10 pointer-events-none"></div>
+          <div class="relative flex items-center justify-between gap-4 px-5 py-3.5">
+            <div class="flex items-center gap-4">
+              <span class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-blue-600 text-white shadow-lg shadow-blue-600/30">
+                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                </svg>
+              </span>
+              <div>
+                <h2 class="text-base font-black tracking-tight text-slate-900 dark:text-slate-100">Estadísticas</h2>
+                <p class="text-xs text-slate-500 dark:text-slate-400">Pulsa cualquier tarjeta para ver el detalle.</p>
+              </div>
+            </div>
+            <svg *ngIf="statsLoading" class="h-4 w-4 animate-spin text-blue-500" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+            </svg>
+          </div>
+        </div>
+
+        <div class="p-4">
+          <!-- Skeleton -->
+          <div *ngIf="statsLoading" class="grid grid-cols-2 gap-3 sm:grid-cols-4 xl:grid-cols-8">
+            <div *ngFor="let i of [1,2,3,4,5,6,7,8]; trackBy: trackByIndex" class="rounded-xl border border-slate-100 dark:border-slate-800 p-4 animate-pulse">
+              <div class="h-3 w-16 bg-slate-200 dark:bg-slate-700 rounded mb-3"></div>
+              <div class="h-8 w-10 bg-slate-200 dark:bg-slate-700 rounded"></div>
+            </div>
+          </div>
+
+          <!-- Stats grid — cada tarjeta es clickable -->
+          <div *ngIf="!statsLoading" class="grid grid-cols-2 gap-3 sm:grid-cols-4 xl:grid-cols-8">
+
+            <button type="button" (click)="toggleStat('totalTareas')"
+              class="rounded-xl border p-3 text-left transition-all hover:shadow-md active:scale-[.98] cursor-pointer"
+              [ngClass]="selectedStat === 'totalTareas' ? 'border-slate-400 bg-slate-100 dark:border-slate-500 dark:bg-slate-700/60 ring-2 ring-slate-300 dark:ring-slate-600' : 'border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30'">
+              <p class="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">Total tareas</p>
+              <p class="mt-1.5 text-2xl font-black text-slate-900 dark:text-slate-100">{{ stats.totalTareas }}</p>
+              <p class="mt-1 text-[10px] text-slate-400">Ver todas →</p>
+            </button>
+
+            <button type="button" (click)="toggleStat('pendientes')"
+              class="rounded-xl border p-3 text-left transition-all hover:shadow-md active:scale-[.98] cursor-pointer"
+              [ngClass]="selectedStat === 'pendientes' ? 'border-amber-400 bg-amber-100/80 dark:border-amber-600 dark:bg-amber-900/30 ring-2 ring-amber-300 dark:ring-amber-700' : 'border-amber-100 dark:border-amber-900/30 bg-amber-50/50 dark:bg-amber-900/10'">
+              <p class="text-xs font-bold uppercase tracking-widest text-amber-600 dark:text-amber-400">Pendientes</p>
+              <p class="mt-1.5 text-2xl font-black text-amber-600 dark:text-amber-400">{{ stats.pendientes }}</p>
+              <p class="mt-1 text-[10px] text-amber-400">Ver detalle →</p>
+            </button>
+
+            <button type="button" (click)="toggleStat('enProgreso')"
+              class="rounded-xl border p-3 text-left transition-all hover:shadow-md active:scale-[.98] cursor-pointer"
+              [ngClass]="selectedStat === 'enProgreso' ? 'border-sky-400 bg-sky-100/80 dark:border-sky-600 dark:bg-sky-900/30 ring-2 ring-sky-300 dark:ring-sky-700' : 'border-sky-100 dark:border-sky-900/30 bg-sky-50/50 dark:bg-sky-900/10'">
+              <p class="text-xs font-bold uppercase tracking-widest text-sky-600 dark:text-sky-400">En progreso</p>
+              <p class="mt-1.5 text-2xl font-black text-sky-600 dark:text-sky-400">{{ stats.enProgreso }}</p>
+              <p class="mt-1 text-[10px] text-sky-400">Ver detalle →</p>
+            </button>
+
+            <button type="button" (click)="toggleStat('completadas')"
+              class="rounded-xl border p-3 text-left transition-all hover:shadow-md active:scale-[.98] cursor-pointer"
+              [ngClass]="selectedStat === 'completadas' ? 'border-emerald-400 bg-emerald-100/80 dark:border-emerald-600 dark:bg-emerald-900/30 ring-2 ring-emerald-300 dark:ring-emerald-700' : 'border-emerald-100 dark:border-emerald-900/30 bg-emerald-50/50 dark:bg-emerald-900/10'">
+              <p class="text-xs font-bold uppercase tracking-widest text-emerald-600 dark:text-emerald-400">Completadas</p>
+              <p class="mt-1.5 text-2xl font-black text-emerald-600 dark:text-emerald-400">{{ stats.completadas }}</p>
+              <p class="mt-1 text-[10px] text-emerald-400">Ver detalle →</p>
+            </button>
+
+            <button type="button" (click)="toggleStat('vencidas')"
+              class="rounded-xl border p-3 text-left transition-all hover:shadow-md active:scale-[.98] cursor-pointer"
+              [ngClass]="selectedStat === 'vencidas' ? 'border-red-400 bg-red-100/80 dark:border-red-600 dark:bg-red-900/30 ring-2 ring-red-300 dark:ring-red-700' : 'border-red-100 dark:border-red-900/30 bg-red-50/50 dark:bg-red-900/10'">
+              <p class="text-xs font-bold uppercase tracking-widest text-red-600 dark:text-red-400">Vencidas</p>
+              <p class="mt-1.5 text-2xl font-black text-red-600 dark:text-red-400">{{ stats.vencidas }}</p>
+              <p class="mt-1 text-[10px] text-red-400">Ver detalle →</p>
+            </button>
+
+            <button type="button" (click)="toggleStat('estasSemana')"
+              class="rounded-xl border p-3 text-left transition-all hover:shadow-md active:scale-[.98] cursor-pointer"
+              [ngClass]="selectedStat === 'estasSemana' ? 'border-blue-400 bg-blue-100/80 dark:border-blue-600 dark:bg-blue-900/30 ring-2 ring-blue-300 dark:ring-blue-700' : 'border-blue-100 dark:border-blue-900/30 bg-blue-50/50 dark:bg-blue-900/10'">
+              <p class="text-xs font-bold uppercase tracking-widest text-blue-600 dark:text-blue-400">Esta semana</p>
+              <p class="mt-1.5 text-2xl font-black text-blue-600 dark:text-blue-400">{{ stats.estasSemana }}</p>
+              <p class="mt-1 text-[10px] text-blue-400">Ver detalle →</p>
+            </button>
+
+            <button type="button" (click)="toggleStat('totalUsuarios')"
+              class="rounded-xl border p-3 text-left transition-all hover:shadow-md active:scale-[.98] cursor-pointer"
+              [ngClass]="selectedStat === 'totalUsuarios' ? 'border-slate-400 bg-slate-100 dark:border-slate-500 dark:bg-slate-700/60 ring-2 ring-slate-300 dark:ring-slate-600' : 'border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30'">
+              <p class="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">Usuarios</p>
+              <p class="mt-1.5 text-2xl font-black text-slate-900 dark:text-slate-100">{{ stats.totalUsuarios }}</p>
+              <p class="mt-1 text-[10px] text-slate-400">Ver detalle →</p>
+            </button>
+
+            <button type="button" (click)="toggleStat('usuariosAdmin')"
+              class="rounded-xl border p-3 text-left transition-all hover:shadow-md active:scale-[.98] cursor-pointer"
+              [ngClass]="selectedStat === 'usuariosAdmin' ? 'border-amber-400 bg-amber-100/80 dark:border-amber-600 dark:bg-amber-900/30 ring-2 ring-amber-300 dark:ring-amber-700' : 'border-amber-100 dark:border-amber-900/30 bg-amber-50/50 dark:bg-amber-900/10'">
+              <p class="text-xs font-bold uppercase tracking-widest text-amber-600 dark:text-amber-400">Admins</p>
+              <p class="mt-1.5 text-2xl font-black text-amber-600 dark:text-amber-400">{{ stats.usuariosAdmin }}</p>
+              <p class="mt-1 text-[10px] text-amber-400">Ver detalle →</p>
+            </button>
+
+          </div>
+
+          <!-- ── Panel de detalle ── -->
+          <div *ngIf="selectedStat" class="mt-6 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/60 dark:bg-slate-800/40 overflow-hidden">
+
+            <!-- Cabecera del detalle -->
+            <div class="flex items-center justify-between px-5 py-3 border-b border-slate-200 dark:border-slate-700">
+              <p class="text-xs font-black uppercase tracking-widest text-slate-600 dark:text-slate-300">
+                Detalle:
+                <span [ngSwitch]="selectedStat">
+                  <ng-template ngSwitchCase="totalTareas">Todas las tareas</ng-template>
+                  <ng-template ngSwitchCase="pendientes">Tareas pendientes</ng-template>
+                  <ng-template ngSwitchCase="enProgreso">Tareas en progreso</ng-template>
+                  <ng-template ngSwitchCase="completadas">Tareas completadas</ng-template>
+                  <ng-template ngSwitchCase="vencidas">Tareas vencidas</ng-template>
+                  <ng-template ngSwitchCase="estasSemana">Creadas esta semana</ng-template>
+                  <ng-template ngSwitchCase="totalUsuarios">Todos los usuarios</ng-template>
+                  <ng-template ngSwitchCase="usuariosAdmin">Administradores</ng-template>
+                </span>
+              </p>
+              <button type="button" (click)="selectedStat = null"
+                class="flex h-6 w-6 items-center justify-center rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-400 transition-colors text-lg leading-none">&times;</button>
+            </div>
+
+            <!-- Detalle: tareas -->
+            <div *ngIf="selectedStat !== 'totalUsuarios' && selectedStat !== 'usuariosAdmin'" class="divide-y divide-slate-100 dark:divide-slate-800/60">
+              <p *ngIf="statDetailTasks.length === 0" class="px-5 py-10 text-center text-sm text-slate-400 dark:text-slate-600">No hay tareas en esta categoría.</p>
+              <div *ngFor="let task of pagedStatDetailTasks; trackBy: trackByTaskId"
+                class="group relative flex items-center gap-3 px-5 py-3 hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors"
+                [ngClass]="{ 'bg-rose-50/30 dark:bg-rose-950/10': filterService.isOverdue(task) }">
+
+                <!-- Priority bar -->
+                <div class="absolute left-0 inset-y-0 w-[3px] rounded-r-full"
+                  [ngClass]="{
+                    'bg-red-500':   task.prioridad === 'alta',
+                    'bg-amber-400': task.prioridad === 'media',
+                    'bg-transparent': task.prioridad === 'baja' || !task.prioridad
+                  }"></div>
+
+                <!-- Status icon -->
+                <div class="flex-shrink-0 flex h-6 w-6 items-center justify-center rounded-md"
+                  [ngClass]="{
+                    'bg-amber-50   dark:bg-amber-900/20':   task.estado === 'pendiente',
+                    'bg-sky-50     dark:bg-sky-900/20':     task.estado === 'en progreso',
+                    'bg-emerald-50 dark:bg-emerald-900/20': task.estado === 'completada',
+                    'bg-rose-50    dark:bg-rose-900/20':    filterService.isOverdue(task)
+                  }">
+                  <ng-container *ngIf="filterService.isOverdue(task)">
+                    <svg class="h-3 w-3 text-rose-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01"/></svg>
+                  </ng-container>
+                  <ng-container *ngIf="!filterService.isOverdue(task) && task.estado === 'completada'">
+                    <svg class="h-3 w-3 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                  </ng-container>
+                  <ng-container *ngIf="!filterService.isOverdue(task) && task.estado === 'en progreso'">
+                    <svg class="h-3 w-3 text-sky-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                  </ng-container>
+                  <ng-container *ngIf="!filterService.isOverdue(task) && task.estado === 'pendiente'">
+                    <svg class="h-3 w-3 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+                  </ng-container>
+                </div>
+
+                <!-- Estado pill -->
+                <div class="flex-shrink-0 w-[100px]">
+                  <ng-container *ngIf="filterService.isOverdue(task)">
+                    <span class="inline-flex items-center gap-1.5 rounded-lg px-2 py-1 text-[10px] font-bold whitespace-nowrap bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400">
+                      <span class="h-1.5 w-1.5 rounded-full bg-rose-500 flex-shrink-0"></span>Vencida
+                    </span>
+                  </ng-container>
+                  <ng-container *ngIf="!filterService.isOverdue(task) && task.estado === 'en progreso'">
+                    <span class="inline-flex items-center gap-1.5 rounded-lg px-2 py-1 text-[10px] font-bold whitespace-nowrap bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-400">
+                      <span class="relative flex h-1.5 w-1.5 flex-shrink-0">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-60"></span>
+                        <span class="relative inline-flex h-1.5 w-1.5 rounded-full bg-sky-500"></span>
+                      </span>En progreso
+                    </span>
+                  </ng-container>
+                  <ng-container *ngIf="!filterService.isOverdue(task) && task.estado === 'completada'">
+                    <span class="inline-flex items-center gap-1.5 rounded-lg px-2 py-1 text-[10px] font-bold whitespace-nowrap bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400">
+                      <svg class="h-2.5 w-2.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>Completada
+                    </span>
+                  </ng-container>
+                  <ng-container *ngIf="!filterService.isOverdue(task) && task.estado === 'pendiente'">
+                    <span class="inline-flex items-center gap-1.5 rounded-lg px-2 py-1 text-[10px] font-bold whitespace-nowrap bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">
+                      <span class="h-1.5 w-1.5 rounded-full bg-amber-500 flex-shrink-0"></span>Pendiente
+                    </span>
+                  </ng-container>
+                </div>
+
+                <!-- Title -->
+                <p class="flex-1 min-w-0 text-[13px] font-semibold text-slate-800 dark:text-slate-200 truncate">{{ task.titulo }}</p>
+
+                <!-- Priority pill -->
+                <span *ngIf="task.prioridad" class="flex-shrink-0 inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[9px] font-bold"
+                  [ngClass]="{
+                    'bg-red-50   text-red-600   dark:bg-red-900/20   dark:text-red-400':   task.prioridad === 'alta',
+                    'bg-amber-50 text-amber-600 dark:bg-amber-900/20 dark:text-amber-400': task.prioridad === 'media',
+                    'bg-slate-100 text-slate-500 dark:bg-slate-800   dark:text-slate-400': task.prioridad === 'baja'
+                  }">
+                  <span class="h-1.5 w-1.5 rounded-full"
+                    [ngClass]="{ 'bg-red-500': task.prioridad === 'alta', 'bg-amber-500': task.prioridad === 'media', 'bg-slate-400': task.prioridad === 'baja' }"></span>
+                  {{ task.prioridad | titlecase }}
+                </span>
+
+                <!-- Fecha -->
+                <span *ngIf="task.fechaLimite" class="flex-shrink-0 text-[11px] font-medium"
+                  [ngClass]="{
+                    'text-rose-500 dark:text-rose-400':   filterService.isOverdue(task),
+                    'text-slate-400 dark:text-slate-500': !filterService.isOverdue(task)
+                  }">
+                  {{ task.fechaLimite | date:'dd/MM/yy' }}
+                </span>
+
+              </div>
+            </div>
+
+            <!-- Paginación: tareas -->
+            <div *ngIf="selectedStat !== 'totalUsuarios' && selectedStat !== 'usuariosAdmin' && statDetailTotalPages > 1"
+              class="flex items-center justify-between gap-2 px-5 py-2.5 border-t border-slate-100 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/30">
+              <span class="text-[11px] text-slate-400 dark:text-slate-500">
+                {{ (statDetailPage - 1) * STAT_DETAIL_PAGE_SIZE + 1 }}–{{ statDetailLastItem(statDetailTasks.length) }} de {{ statDetailTasks.length }}
+              </span>
+              <div class="flex items-center gap-1">
+                <button type="button" (click)="statDetailPage = statDetailPage - 1" [disabled]="statDetailPage === 1"
+                  class="flex h-7 w-7 items-center justify-center rounded-lg border border-slate-200 dark:border-slate-700 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700 disabled:opacity-30 transition-colors">
+                  <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+                </button>
+                <span class="text-[11px] font-bold text-slate-600 dark:text-slate-300 px-1">{{ statDetailPage }} / {{ statDetailTotalPages }}</span>
+                <button type="button" (click)="statDetailPage = statDetailPage + 1" [disabled]="statDetailPage === statDetailTotalPages"
+                  class="flex h-7 w-7 items-center justify-center rounded-lg border border-slate-200 dark:border-slate-700 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700 disabled:opacity-30 transition-colors">
+                  <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+                </button>
+              </div>
+            </div>
+
+            <!-- Detalle: usuarios -->
+            <div *ngIf="selectedStat === 'totalUsuarios' || selectedStat === 'usuariosAdmin'" class="divide-y divide-slate-100 dark:divide-slate-700/60">
+              <p *ngIf="statDetailUsers.length === 0"
+                class="px-5 py-8 text-center text-sm text-slate-400">No hay administradores.</p>
+              <div *ngFor="let u of pagedStatDetailUsers; trackBy: trackByUserId"
+                class="flex items-center gap-3 px-5 py-3 hover:bg-white dark:hover:bg-slate-800/60 transition-colors">
+                <span class="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-blue-100 text-xs font-black text-blue-600 dark:bg-blue-900/30 dark:text-blue-400">
+                  {{ (u.nombre || u.email || '?').charAt(0).toUpperCase() }}
+                </span>
+                <div class="flex-1 min-w-0">
+                  <p class="text-sm font-semibold text-slate-800 dark:text-slate-200 truncate">{{ u.nombre || 'Sin nombre' }}</p>
+                  <p class="text-xs text-slate-400 truncate">{{ u.email }}</p>
+                </div>
+                <span *ngIf="u.roles?.includes('ROLE_ADMIN')"
+                  class="text-[9px] font-black px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200 dark:bg-amber-900/20 dark:text-amber-400 dark:border-amber-800 uppercase">Admin</span>
+              </div>
+            </div>
+
+            <!-- Paginación: usuarios -->
+            <div *ngIf="(selectedStat === 'totalUsuarios' || selectedStat === 'usuariosAdmin') && statDetailUsersTotalPages > 1"
+              class="flex items-center justify-between gap-2 px-5 py-2.5 border-t border-slate-100 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/30">
+              <span class="text-[11px] text-slate-400 dark:text-slate-500">
+                {{ (statDetailPage - 1) * STAT_DETAIL_PAGE_SIZE + 1 }}–{{ statDetailLastItem(statDetailUsers.length) }} de {{ statDetailUsers.length }}
+              </span>
+              <div class="flex items-center gap-1">
+                <button type="button" (click)="statDetailPage = statDetailPage - 1" [disabled]="statDetailPage === 1"
+                  class="flex h-7 w-7 items-center justify-center rounded-lg border border-slate-200 dark:border-slate-700 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700 disabled:opacity-30 transition-colors">
+                  <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+                </button>
+                <span class="text-[11px] font-bold text-slate-600 dark:text-slate-300 px-1">{{ statDetailPage }} / {{ statDetailUsersTotalPages }}</span>
+                <button type="button" (click)="statDetailPage = statDetailPage + 1" [disabled]="statDetailPage === statDetailUsersTotalPages"
+                  class="flex h-7 w-7 items-center justify-center rounded-lg border border-slate-200 dark:border-slate-700 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700 disabled:opacity-30 transition-colors">
+                  <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+                </button>
+              </div>
+            </div>
+
+          </div><!-- /detalle -->
+
+        </div>
+      </section>
+
+      <!-- ══════════════════════════════════════════ -->
+      <!--           CARD ACTIVIDAD                   -->
+      <!-- ══════════════════════════════════════════ -->
+      <section id="actividad" class="scroll-mt-20 rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-900 overflow-hidden">
+
+        <!-- Cabecera con gradiente -->
+        <div class="relative overflow-hidden border-b border-slate-100 dark:border-slate-800">
+          <div class="absolute inset-0 bg-gradient-to-r from-blue-50 via-white to-indigo-50/30 dark:from-blue-950/20 dark:via-slate-900 dark:to-indigo-950/10 pointer-events-none"></div>
+          <div class="relative flex items-center justify-between gap-4 px-5 py-3.5">
+            <div class="flex items-center gap-4">
+              <span class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-blue-600 text-white shadow-lg shadow-blue-600/30">
+                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+              </span>
+              <div>
+                <h2 class="text-base font-black tracking-tight text-slate-900 dark:text-slate-100">Actividad</h2>
+                <p class="text-xs text-slate-500 dark:text-slate-400">Historial de acciones y cambios del sistema.</p>
+              </div>
+            </div>
+            <!-- Botón limpiar solo en pestaña admin -->
+            <button *ngIf="activityTab === 'admin' && activityLog.length > 0" type="button" (click)="clearActivityLog()"
+              class="h-7 px-3 rounded-lg border border-slate-200 text-[10px] font-bold text-slate-400 hover:text-red-500 hover:border-red-200 hover:bg-red-50 transition dark:border-slate-700 dark:hover:bg-red-950/20 dark:hover:text-red-400">
+              Limpiar historial
+            </button>
+          </div>
+        </div>
+
+        <!-- Pestañas — FUERA del overflow-hidden para que border-b-2 sea visible -->
+        <div class="flex border-b border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900">
+          <button type="button" (click)="activityTab = 'sistema'"
+            class="flex-1 flex items-center justify-center gap-2 px-4 py-3 text-xs font-bold transition-all border-b-2"
+            [ngClass]="activityTab === 'sistema'
+              ? 'border-blue-600 text-blue-600 dark:text-blue-400 dark:border-blue-500 bg-blue-50/50 dark:bg-blue-950/10'
+              : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50 dark:text-slate-400 dark:hover:bg-slate-800/40'">
+            <svg class="h-3.5 w-3.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+            </svg>
+            <span class="hidden sm:inline">Sistema</span>
+            <span *ngIf="systemTimeline.length > 0"
+              class="flex h-4 min-w-[16px] items-center justify-center rounded-full px-1 text-[9px] font-black"
+              [ngClass]="activityTab === 'sistema' ? 'bg-blue-600 text-white' : 'bg-slate-200 text-slate-500 dark:bg-slate-700 dark:text-slate-400'">
+              {{ systemTimeline.length }}
+            </span>
+          </button>
+          <div class="w-px bg-slate-100 dark:bg-slate-800 my-2"></div>
+          <button type="button" (click)="activityTab = 'usuarios'"
+            class="flex-1 flex items-center justify-center gap-2 px-4 py-3 text-xs font-bold transition-all border-b-2"
+            [ngClass]="activityTab === 'usuarios'
+              ? 'border-blue-600 text-blue-600 dark:text-blue-400 dark:border-blue-500 bg-blue-50/50 dark:bg-blue-950/10'
+              : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50 dark:text-slate-400 dark:hover:bg-slate-800/40'">
+            <svg class="h-3.5 w-3.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
+            </svg>
+            <span class="hidden sm:inline">Por usuario</span>
+            <span *ngIf="allUsers.length > 0"
+              class="flex h-4 min-w-[16px] items-center justify-center rounded-full px-1 text-[9px] font-black"
+              [ngClass]="activityTab === 'usuarios' ? 'bg-blue-600 text-white' : 'bg-slate-200 text-slate-500 dark:bg-slate-700 dark:text-slate-400'">
+              {{ allUsers.length }}
+            </span>
+          </button>
+          <div class="w-px bg-slate-100 dark:bg-slate-800 my-2"></div>
+          <button type="button" (click)="activityTab = 'admin'"
+            class="flex-1 flex items-center justify-center gap-2 px-4 py-3 text-xs font-bold transition-all border-b-2"
+            [ngClass]="activityTab === 'admin'
+              ? 'border-blue-600 text-blue-600 dark:text-blue-400 dark:border-blue-500 bg-blue-50/50 dark:bg-blue-950/10'
+              : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50 dark:text-slate-400 dark:hover:bg-slate-800/40'">
+            <svg class="h-3.5 w-3.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+            </svg>
+            <span class="hidden sm:inline">Mis acciones</span>
+            <span *ngIf="activityLog.length > 0"
+              class="flex h-4 min-w-[16px] items-center justify-center rounded-full px-1 text-[9px] font-black"
+              [ngClass]="activityTab === 'admin' ? 'bg-blue-600 text-white' : 'bg-slate-200 text-slate-500 dark:bg-slate-700 dark:text-slate-400'">
+              {{ activityLog.length }}
+            </span>
           </button>
         </div>
-      </div>
 
-      <button
-        type="button"
-        (click)="onSearch()"
-        [disabled]="searchingUsers"
-        aria-label="Buscar usuarios"
-        class="inline-flex h-10 items-center rounded-md bg-primary px-4 text-sm font-medium text-white transition hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-600 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
-      >
-        {{ searchingUsers ? 'Buscando...' : 'Buscar' }}
+        <!-- ── Pestaña: Actividad del sistema ── -->
+        <div *ngIf="activityTab === 'sistema'" class="divide-y divide-slate-50 dark:divide-slate-800/60 max-h-[480px] overflow-y-auto">
+
+          <!-- Estado vacío -->
+          <div *ngIf="systemTimeline.length === 0" class="flex flex-col items-center py-14 text-center">
+            <span class="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800">
+              <svg class="h-5 w-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+              </svg>
+            </span>
+            <p class="text-sm font-bold text-slate-500 dark:text-slate-400">No hay tareas en el sistema</p>
+            <p class="mt-1 text-xs text-slate-400">Crea la primera tarea para ver la actividad.</p>
+          </div>
+
+          <!-- Timeline de tareas -->
+          <div *ngFor="let entry of systemTimeline; trackBy: trackByIndex"
+            class="flex items-start gap-4 px-6 py-3.5 hover:bg-slate-50/60 dark:hover:bg-slate-800/30 transition-colors">
+
+            <!-- Icono basado en el tipo de evento -->
+            <div class="mt-0.5 flex-shrink-0">
+              <span class="flex h-7 w-7 items-center justify-center rounded-full"
+                [ngClass]="{
+                  'bg-blue-100  text-blue-600  dark:bg-blue-900/30  dark:text-blue-400':   entry.tipo === 'creada',
+                  'bg-emerald-100 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400': entry.tipo === 'completada'
+                }">
+                <!-- Creada -->
+                <svg *ngIf="entry.tipo === 'creada'" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                </svg>
+                <!-- Completada -->
+                <svg *ngIf="entry.tipo === 'completada'" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                </svg>
+              </span>
+            </div>
+
+            <!-- Contenido -->
+            <div class="flex-1 min-w-0">
+              <div class="flex items-start justify-between gap-2">
+                <div class="min-w-0">
+                  <!-- Etiqueta del evento + título -->
+                  <div class="flex items-center gap-1.5 flex-wrap mb-0.5">
+                    <span class="text-[9px] font-black uppercase tracking-widest"
+                      [ngClass]="{
+                        'text-blue-500 dark:text-blue-400':    entry.tipo === 'creada',
+                        'text-emerald-600 dark:text-emerald-400': entry.tipo === 'completada'
+                      }">
+                      {{ entry.tipo === 'creada' ? 'Creada' : 'Completada' }}
+                    </span>
+                    <span class="text-slate-300 dark:text-slate-600 text-[9px]">·</span>
+                    <!-- Estado actual de la tarea -->
+                    <span class="inline-flex items-center rounded-full px-1.5 py-0.5 text-[9px] font-black uppercase tracking-wide"
+                      [ngClass]="{
+                        'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400': entry.task.estado === 'pendiente',
+                        'bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-400':         entry.task.estado === 'en progreso',
+                        'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400': entry.task.estado === 'completada'
+                      }">
+                      {{ entry.task.estado === 'en progreso' ? 'En progreso' : entry.task.estado }}
+                    </span>
+                  </div>
+                  <p class="text-sm font-semibold text-slate-800 dark:text-slate-200 truncate">{{ entry.task.titulo }}</p>
+                  <div class="flex items-center flex-wrap gap-1.5 mt-1">
+                    <!-- Badge prioridad -->
+                    <span *ngIf="entry.task.prioridad"
+                      class="inline-flex items-center gap-1 rounded-full px-1.5 py-0.5 text-[9px] font-bold"
+                      [ngClass]="{
+                        'bg-red-50 text-red-600 dark:bg-red-900/20 dark:text-red-400':          entry.task.prioridad === 'alta',
+                        'bg-amber-50 text-amber-600 dark:bg-amber-900/20 dark:text-amber-400':  entry.task.prioridad === 'media',
+                        'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400':    entry.task.prioridad === 'baja'
+                      }">
+                      <span class="h-1 w-1 rounded-full"
+                        [ngClass]="{
+                          'bg-red-500': entry.task.prioridad === 'alta',
+                          'bg-amber-500': entry.task.prioridad === 'media',
+                          'bg-slate-400': entry.task.prioridad === 'baja'
+                        }"></span>
+                      {{ entry.task.prioridad | titlecase }}
+                    </span>
+                    <!-- Vencida (solo si fechaLimite pasada y no completada) -->
+                    <span *ngIf="filterService.isOverdue(entry.task)"
+                      class="inline-flex rounded-full px-1.5 py-0.5 text-[9px] font-black uppercase bg-rose-50 text-rose-500 dark:bg-rose-900/20">
+                      ⚠ Vencida
+                    </span>
+                  </div>
+                </div>
+                <span class="flex-shrink-0 text-[10px] text-slate-400 dark:text-slate-500 whitespace-nowrap mt-0.5">
+                  {{ formatSystemTime(entry.fecha) }}{{ activityTick * 0 }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── Pestaña: Por usuario ── -->
+        <div *ngIf="activityTab === 'usuarios'">
+
+          <!-- Buscador -->
+          <div class="px-6 py-3 border-b border-slate-100 dark:border-slate-800">
+            <div class="relative">
+              <svg class="absolute inset-y-0 left-3 my-auto h-3.5 w-3.5 text-slate-400 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M17 11A6 6 0 115 11a6 6 0 0112 0z"/>
+              </svg>
+              <input type="text" [(ngModel)]="userStatsSearch" (input)="onUserStatsSearch()" placeholder="Filtrar por nombre o email…"
+                class="h-9 w-full rounded-xl border border-slate-200 bg-slate-50/50 pl-9 pr-3 text-sm text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/10 dark:border-slate-700 dark:bg-slate-800/60 dark:text-slate-100 transition"/>
+            </div>
+          </div>
+
+          <!-- Estado vacío -->
+          <div *ngIf="allUsers.length === 0" class="flex flex-col items-center py-14 text-center">
+            <p class="text-sm font-bold text-slate-500 dark:text-slate-400">No hay usuarios registrados.</p>
+          </div>
+
+          <!-- Tabla -->
+          <div *ngIf="allUsers.length > 0" class="overflow-x-auto">
+            <table class="w-full border-collapse text-sm">
+              <thead>
+                <tr class="bg-slate-50/80 dark:bg-slate-800/40 border-b border-slate-200 dark:border-slate-700">
+                  <th class="px-5 py-3 text-left text-[10px] font-black uppercase tracking-widest text-slate-400">Usuario</th>
+                  <th class="px-3 py-3 text-center text-[10px] font-black uppercase tracking-widest text-slate-400 w-14">Total</th>
+                  <th class="px-3 py-3 text-center text-[10px] font-black uppercase tracking-widest text-amber-500 w-16">Pend.</th>
+                  <th class="px-3 py-3 text-center text-[10px] font-black uppercase tracking-widest text-sky-500 w-18">Progreso</th>
+                  <th class="px-3 py-3 text-center text-[10px] font-black uppercase tracking-widest text-emerald-500 w-16">Hecho</th>
+                  <th class="px-3 py-3 text-center text-[10px] font-black uppercase tracking-widest text-rose-400 w-14">Venc.</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+                <tr *ngFor="let row of pagedUserStats; trackBy: trackByUserStat" class="hover:bg-slate-50/60 dark:hover:bg-slate-800/30 transition-colors">
+                  <td class="px-5 py-3">
+                    <div class="flex items-center gap-2.5">
+                      <span class="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-blue-100 text-[10px] font-black text-blue-600 dark:bg-blue-900/30 dark:text-blue-400">
+                        {{ (row.user.nombre || row.user.email || '?').charAt(0).toUpperCase() }}
+                      </span>
+                      <div class="min-w-0">
+                        <p class="text-sm font-semibold text-slate-800 dark:text-slate-200 truncate">{{ row.user.nombre || 'Sin nombre' }}</p>
+                        <p class="text-[10px] text-slate-400 truncate">{{ row.user.email }}</p>
+                      </div>
+                      <span *ngIf="row.user.roles?.includes('ROLE_ADMIN')"
+                        class="flex-shrink-0 text-[9px] font-black px-1.5 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200 dark:bg-amber-900/20 dark:text-amber-400 dark:border-amber-800 uppercase">Admin</span>
+                    </div>
+                  </td>
+                  <td class="px-3 py-3 text-center">
+                    <span class="text-sm font-black text-slate-700 dark:text-slate-300">{{ row.total }}</span>
+                  </td>
+                  <td class="px-3 py-3 text-center">
+                    <span *ngIf="row.pendientes > 0" class="inline-flex h-5 min-w-[20px] items-center justify-center rounded-full bg-amber-100 text-[10px] font-black text-amber-700 dark:bg-amber-900/30 dark:text-amber-400 px-1.5">{{ row.pendientes }}</span>
+                    <span *ngIf="row.pendientes === 0" class="text-slate-300 dark:text-slate-700 text-xs">—</span>
+                  </td>
+                  <td class="px-3 py-3 text-center">
+                    <span *ngIf="row.enProgreso > 0" class="inline-flex h-5 min-w-[20px] items-center justify-center rounded-full bg-sky-100 text-[10px] font-black text-sky-700 dark:bg-sky-900/30 dark:text-sky-400 px-1.5">{{ row.enProgreso }}</span>
+                    <span *ngIf="row.enProgreso === 0" class="text-slate-300 dark:text-slate-700 text-xs">—</span>
+                  </td>
+                  <td class="px-3 py-3 text-center">
+                    <span *ngIf="row.completadas > 0" class="inline-flex h-5 min-w-[20px] items-center justify-center rounded-full bg-emerald-100 text-[10px] font-black text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 px-1.5">{{ row.completadas }}</span>
+                    <span *ngIf="row.completadas === 0" class="text-slate-300 dark:text-slate-700 text-xs">—</span>
+                  </td>
+                  <td class="px-3 py-3 text-center">
+                    <span *ngIf="row.vencidas > 0" class="inline-flex h-5 min-w-[20px] items-center justify-center rounded-full bg-rose-100 text-[10px] font-black text-rose-600 dark:bg-rose-900/30 dark:text-rose-400 px-1.5">{{ row.vencidas }}</span>
+                    <span *ngIf="row.vencidas === 0" class="text-slate-300 dark:text-slate-700 text-xs">—</span>
+                  </td>
+                </tr>
+                <!-- Sin resultados de búsqueda -->
+                <tr *ngIf="pagedUserStats.length === 0">
+                  <td colspan="6" class="px-5 py-10 text-center text-sm text-slate-400">No hay usuarios que coincidan con la búsqueda.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Paginación -->
+          <div *ngIf="userStatsTotalPages > 1" class="flex items-center justify-between border-t border-slate-100 dark:border-slate-800 px-5 py-3">
+            <p class="text-xs text-slate-500 dark:text-slate-400">
+              {{ (userStatsPage - 1) * USER_STATS_PAGE_SIZE + 1 }}–{{ Math.min(userStatsPage * USER_STATS_PAGE_SIZE, filteredUserStats.length) }} de {{ filteredUserStats.length }} usuarios
+            </p>
+            <nav class="flex items-center gap-1">
+              <button type="button" (click)="userStatsPage = userStatsPage - 1" [disabled]="userStatsPage === 1"
+                class="flex h-7 w-7 items-center justify-center rounded-lg border border-slate-200 text-xs text-slate-600 hover:bg-slate-100 disabled:opacity-40 transition dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800">‹</button>
+              @for (p of [].constructor(userStatsTotalPages); track $index) {
+                <button type="button" (click)="userStatsPage = $index + 1"
+                  class="flex h-7 w-7 items-center justify-center rounded-lg border text-xs font-medium transition"
+                  [ngClass]="userStatsPage === $index + 1 ? 'bg-blue-600 text-white border-blue-600' : 'border-slate-200 text-slate-600 hover:bg-slate-100 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800'">
+                  {{ $index + 1 }}
+                </button>
+              }
+              <button type="button" (click)="userStatsPage = userStatsPage + 1" [disabled]="userStatsPage === userStatsTotalPages"
+                class="flex h-7 w-7 items-center justify-center rounded-lg border border-slate-200 text-xs text-slate-600 hover:bg-slate-100 disabled:opacity-40 transition dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800">›</button>
+            </nav>
+          </div>
+        </div>
+
+        <!-- ── Pestaña: Mis acciones (admin log) ── -->
+        <div *ngIf="activityTab === 'admin'" class="max-h-[480px] overflow-y-auto">
+
+          <!-- Estado vacío -->
+          <div *ngIf="activityLog.length === 0" class="flex flex-col items-center py-14 text-center">
+            <span class="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800">
+              <svg class="h-5 w-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+              </svg>
+            </span>
+            <p class="text-sm font-bold text-slate-500 dark:text-slate-400">Sin acciones registradas</p>
+            <p class="mt-1 text-xs text-slate-400 dark:text-slate-500">Las acciones que realices aparecerán aquí.</p>
+          </div>
+
+          <!-- Timeline acciones admin -->
+          <ul *ngIf="activityLog.length > 0" class="divide-y divide-slate-50 dark:divide-slate-800/60">
+            <li *ngFor="let entry of activityLog; trackBy: trackByIndex" class="flex items-start gap-4 px-6 py-3.5 hover:bg-slate-50/60 dark:hover:bg-slate-800/30 transition-colors">
+              <span class="mt-0.5 flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full"
+                [ngClass]="{
+                  'bg-emerald-100 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400': entry.type === 'user_created' || entry.type === 'task_created',
+                  'bg-red-100    text-red-600    dark:bg-red-900/30    dark:text-red-400':    entry.type === 'user_deleted' || entry.type === 'task_deleted',
+                  'bg-sky-100    text-sky-600    dark:bg-sky-900/30    dark:text-sky-400':    entry.type === 'task_updated',
+                  'bg-blue-100   text-blue-600   dark:bg-blue-900/30   dark:text-blue-400':   entry.type === 'user_updated',
+                  'bg-violet-100 text-violet-600 dark:bg-violet-900/30 dark:text-violet-400': entry.type === 'task_status_changed',
+                  'bg-amber-100  text-amber-600  dark:bg-amber-900/30  dark:text-amber-400':  entry.type === 'password_reset'
+                }">
+                <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                  <path *ngIf="entry.type === 'user_created'"      stroke-linecap="round" stroke-linejoin="round" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>
+                  <path *ngIf="entry.type === 'user_updated'"      stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536M9 13l6.586-6.586a2 2 0 012.828 0L19.5 7.5a2 2 0 010 2.828L12.828 17H9v-4z"/>
+                  <path *ngIf="entry.type === 'user_deleted'"      stroke-linecap="round" stroke-linejoin="round" d="M13 7a4 4 0 11-8 0 4 4 0 018 0zM9 14a6 6 0 00-6 6v1h12v-1a6 6 0 00-6-6zM21 12H9"/>
+                  <path *ngIf="entry.type === 'task_created'"      stroke-linecap="round" stroke-linejoin="round" d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                  <path *ngIf="entry.type === 'task_deleted'"      stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                  <path *ngIf="entry.type === 'task_updated'"      stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                  <path *ngIf="entry.type === 'task_status_changed'" stroke-linecap="round" stroke-linejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/>
+                  <path *ngIf="entry.type === 'password_reset'"    stroke-linecap="round" stroke-linejoin="round" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/>
+                </svg>
+              </span>
+              <div class="flex-1 min-w-0 flex items-start justify-between gap-2">
+                <p class="text-sm font-semibold text-slate-800 dark:text-slate-200">{{ entry.message }}</p>
+                <span class="flex-shrink-0 text-[10px] text-slate-400 dark:text-slate-500 whitespace-nowrap mt-0.5">
+                  {{ formatActivityTime(entry.time) }}{{ activityTick * 0 }}
+                </span>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+      </section>
+
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!--  MODAL EDICIÓN DE USUARIO                                 -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<div *ngIf="editingUser" class="fixed inset-0 z-50 flex items-center justify-center p-4"
+  (click)="cancelEditUser()">
+  <!-- Backdrop -->
+  <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm"></div>
+
+  <!-- Panel -->
+  <div class="relative w-full max-w-md rounded-2xl border border-slate-200 bg-white shadow-2xl dark:border-slate-700 dark:bg-slate-900"
+    [formGroup]="editUserForm"
+    (click)="$event.stopPropagation()">
+
+    <!-- Header -->
+    <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 px-6 py-4">
+      <div class="flex items-center gap-3">
+        <span class="flex h-9 w-9 items-center justify-center rounded-full bg-blue-100 text-sm font-black text-blue-600 dark:bg-blue-900/30 dark:text-blue-400">
+          {{ (editingUser.nombre || editingUser.email || '?').charAt(0).toUpperCase() }}
+        </span>
+        <div>
+          <h3 class="text-base font-black text-slate-900 dark:text-slate-100">Editar usuario</h3>
+          <p class="text-xs text-slate-400">{{ editingUser.email }}</p>
+        </div>
+      </div>
+      <button type="button" (click)="cancelEditUser()" [disabled]="savingUser"
+        class="flex h-8 w-8 items-center justify-center rounded-xl border border-slate-200 text-slate-400 hover:bg-slate-100 transition disabled:opacity-50 dark:border-slate-700 dark:hover:bg-slate-800">
+        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
       </button>
     </div>
-  </section>
 
-  <section class="mt-8 rounded-lg border bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-900">
-    <h2 class="mb-4 text-lg font-semibold text-accent dark:text-slate-100">Listado de usuarios</h2>
-
-    <p *ngIf="loadingUsers" class="text-sm text-slate-500 dark:text-slate-300">Cargando usuarios...</p>
-    <p *ngIf="!loadingUsers && users.length === 0" class="text-sm text-slate-500 dark:text-slate-300">
-      No hay usuarios registrados.
-    </p>
-
-    <div *ngIf="!loadingUsers && users.length > 0" class="overflow-x-auto">
-      <table class="min-w-full divide-y divide-slate-200 dark:divide-slate-700">
-        <thead class="bg-slate-50 dark:bg-slate-800">
-          <tr>
-            <th class="px-4 py-3 text-left text-sm font-semibold text-slate-700 dark:text-slate-200">ID</th>
-            <th class="px-4 py-3 text-left text-sm font-semibold text-slate-700 dark:text-slate-200">Email</th>
-            <th class="px-4 py-3 text-left text-sm font-semibold text-slate-700 dark:text-slate-200">Nombre</th>
-            <th class="px-4 py-3 text-left text-sm font-semibold text-slate-700 dark:text-slate-200">Roles</th>
-            <th class="px-4 py-3 text-right text-sm font-semibold text-slate-700 dark:text-slate-200">Acciones</th>
-          </tr>
-        </thead>
-        <tbody class="divide-y divide-slate-200 dark:divide-slate-700">
-          <tr *ngFor="let user of users" class="hover:bg-slate-50 dark:hover:bg-slate-800">
-            <td class="px-4 py-3 text-sm text-slate-700 dark:text-slate-200">{{ user.id }}</td>
-            <td class="px-4 py-3 text-sm text-slate-700 dark:text-slate-200">{{ user.email }}</td>
-            <td class="px-4 py-3 text-sm text-slate-700 dark:text-slate-200">{{ user.nombre }}</td>
-            <td class="px-4 py-3 text-sm text-slate-700 dark:text-slate-200">{{ user.roles.join(', ') }}</td>
-            <td class="px-4 py-3 text-right">
-              <button
-                type="button"
-                (click)="onResetPassword(user)"
-                [disabled]="resettingUserId === user.id"
-                [attr.aria-label]="'Resetear contraseña del usuario ' + user.email"
-                class="inline-flex h-9 items-center rounded-md border border-slate-300 px-3 text-sm font-medium text-slate-700 transition hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-primary-600 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-800"
-              >
-                {{ resettingUserId === user.id ? 'Reseteando...' : 'Resetear contraseña' }}
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+    <!-- Body -->
+    <div class="flex flex-col gap-4 px-6 py-5">
+      <div>
+        <label class="block text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1.5">Nombre completo</label>
+        <input type="text" formControlName="nombre" placeholder="Nombre del usuario"
+          class="h-10 w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3.5 text-sm text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/10 dark:border-slate-700 dark:bg-slate-800/60 dark:text-slate-100 transition"/>
+      </div>
+      <div>
+        <label class="block text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1.5">Email <span class="text-red-400">*</span></label>
+        <input type="email" formControlName="email" placeholder="usuario@ejemplo.com"
+          class="h-10 w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3.5 text-sm text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/10 dark:border-slate-700 dark:bg-slate-800/60 dark:text-slate-100 transition"
+          [ngClass]="editUserForm.get('email')?.invalid && editUserForm.get('email')?.touched ? 'border-red-400' : ''"/>
+        <p *ngIf="editUserForm.get('email')?.hasError('email') && editUserForm.get('email')?.touched"
+          class="mt-1 text-xs text-red-500">Email no válido.</p>
+      </div>
+      <div class="flex items-center gap-3 rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-3 dark:border-slate-700 dark:bg-slate-800/30">
+        <input type="checkbox" formControlName="isAdmin" id="editIsAdmin"
+          class="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500/20"/>
+        <label for="editIsAdmin" class="flex-1 cursor-pointer">
+          <p class="text-sm font-bold text-slate-700 dark:text-slate-200">Permisos de administrador</p>
+          <p class="text-xs text-slate-400 mt-0.5">El usuario tendrá acceso al panel de administración.</p>
+        </label>
+        <span class="flex-shrink-0 text-[10px] font-black px-2 py-0.5 rounded-full"
+          [ngClass]="editUserForm.get('isAdmin')?.value
+            ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400'
+            : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'">
+          {{ editUserForm.get('isAdmin')?.value ? 'ADMIN' : 'USER' }}
+        </span>
+      </div>
     </div>
-  </section>
-</main>
+
+    <!-- Footer -->
+    <div class="flex items-center justify-end gap-3 border-t border-slate-100 dark:border-slate-800 px-6 py-4">
+      <button type="button" (click)="cancelEditUser()" [disabled]="savingUser"
+        class="h-9 px-5 rounded-xl border border-slate-200 text-sm font-bold text-slate-600 hover:bg-slate-50 transition disabled:opacity-50 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800">
+        Cancelar
+      </button>
+      <button type="button" (click)="saveEditUser()" [disabled]="savingUser || editUserForm.invalid"
+        class="inline-flex h-9 items-center gap-2 rounded-xl bg-blue-600 px-6 text-sm font-bold text-white shadow-md shadow-blue-600/20 hover:bg-blue-700 disabled:opacity-60 transition active:scale-95">
+        <svg *ngIf="savingUser" class="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+        </svg>
+        <svg *ngIf="!savingUser" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+        </svg>
+        {{ savingUser ? 'Guardando…' : 'Guardar cambios' }}
+      </button>
+    </div>
+  </div>
+
+  </div>
+</div>

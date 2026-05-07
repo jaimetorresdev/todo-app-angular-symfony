@@ -52,12 +52,8 @@ export class LoginComponent implements OnInit {
           next: (user) => {
             this.toast.success('Sesión iniciada correctamente');
             this.loading = false;
-
-            if (user.roles.includes('ROLE_ADMIN')) {
-              this.router.navigateByUrl('/admin');
-            } else {
-              this.router.navigateByUrl('/tasks');
-            }
+            this.store.setUser(user);
+            this.router.navigateByUrl('/');
           },
           error: () => {
             this.loading = false;

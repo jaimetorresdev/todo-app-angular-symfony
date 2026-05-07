@@ -65,10 +65,22 @@ describe('NavbarComponent', () => {
     expect(adminLink).toBeFalsy();
   });
 
-  it('debe limpiar la sesión y volver al inicio al pulsar Cerrar sesión', () => {
+  it('debe mostrar el enlace Ajustes cuando el usuario no es administrador', () => {
+    authStoreMock.isAdmin.and.returnValue(false);
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+    const settingsLink = Array.from(compiled.querySelectorAll('a')).find((a) =>
+      a.textContent?.includes('Ajustes')
+    );
+
+    expect(settingsLink).toBeTruthy();
+  });
+
+  it('debe limpiar la sesión y volver al inicio al pulsar Salir', () => {
     const compiled = fixture.nativeElement as HTMLElement;
     const logoutButton = Array.from(compiled.querySelectorAll('button')).find((b) =>
-      b.textContent?.includes('Cerrar sesión')
+      b.textContent?.includes('Salir')
     ) as HTMLButtonElement;
 
     logoutButton.click();
