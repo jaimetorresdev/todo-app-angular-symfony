@@ -41,8 +41,9 @@ class Usuario implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @var Collection<int, Tarea>
+     * Se añade cascade: ['remove'] para permitir el borrado de usuarios con tareas asociadas
      */
-    #[ORM\OneToMany(mappedBy: 'usuario', targetEntity: Tarea::class, orphanRemoval: true)]
+    #[ORM\OneToMany(mappedBy: 'usuario', targetEntity: Tarea::class, cascade: ['remove'], orphanRemoval: true)]
     private Collection $tareas;
 
     public function __construct()

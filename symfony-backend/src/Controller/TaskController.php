@@ -31,15 +31,27 @@ class TaskController extends AbstractController
         $usuarioId = $usuario?->getId() ?? $request->query->getInt('usuarioId', 1);
 
         $filtros = [
-            'estado' => $request->query->get('estado'),
-            'texto' => $request->query->get('q'),
+            'estado'   => $request->query->get('estado'),
+            'texto'    => $request->query->get('q'),
+            'prioridad' => $request->query->get('prioridad'),
         ];
 
-        $tareas = $this->tareaManager->listarPorUsuario($usuarioId, $filtros);
+        $page  = max(1, $request->query->getInt('page', 1));
+        $limit = min(50, max(1, $request->query->getInt('limit', 10)));
 
-        $data = array_map(fn (Tarea $tarea) => $this->serializeTask($tarea), $tareas);
+        $resultado = $this->tareaManager->listarPorUsuario($usuarioId, $filtros, $page, $limit);
 
-        return $this->json($data);
+        $data = array_map(fn (Tarea $tarea) => $this->serializeTask($tarea), $resultado['items']);
+
+        return $this->json([
+            'data' => $data,
+            'meta' => [
+                'total'      => $resultado['total'],
+                'page'       => $resultado['page'],
+                'limit'      => $resultado['limit'],
+                'totalPages' => $resultado['totalPages'],
+            ],
+        ]);
     }
 
     #[Route('', name: 'api_tasks_create', methods: ['POST'])]
@@ -125,6 +137,9 @@ class TaskController extends AbstractController
         return $this->json(['message' => 'Tarea eliminada satisfactoriamente']);
     }
 
+    /**
+     * Helper para transformar la entidad Tarea en un array estructurado para el Frontend.
+     */
     private function serializeTask(Tarea $tarea): array
     {
         return [
@@ -132,7 +147,9 @@ class TaskController extends AbstractController
             'titulo' => $tarea->getTitulo(),
             'descripcion' => $tarea->getDescripcion(),
             'estado' => $tarea->getEstado(),
+            'prioridad' => $tarea->getPrioridad(),
             'fechaCreacion' => $tarea->getFechaCreacion()?->format('Y-m-d H:i:s'),
+            'fechaActualizacion' => $tarea->getFechaActualizacion()?->format('Y-m-d H:i:s'),
             'fechaLimite' => $tarea->getFechaLimite()?->format('Y-m-d'),
             'usuario' => $tarea->getUsuario() ? [
                 'id' => $tarea->getUsuario()->getId(),

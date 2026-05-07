@@ -5,6 +5,7 @@ namespace App\Controller\Admin;
 use App\Entity\Usuario;
 use App\Repository\UsuarioRepository;
 use App\Service\AdministradorUsuarioService;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -24,12 +25,23 @@ class UsuarioController extends AbstractController
     #[Route('', name: 'api_admin_users_list', methods: ['GET'])]
     public function list(Request $request): JsonResponse
     {
-        $term = $request->query->get('q');
-        $usuarios = $this->adminUsuarios->listar($term);
+        $term  = $request->query->get('q');
+        $page  = max(1, $request->query->getInt('page', 1));
+        $limit = min(50, max(1, $request->query->getInt('limit', 15)));
 
-        $data = array_map(fn (Usuario $usuario) => $this->serializeUser($usuario), $usuarios);
+        $resultado = $this->adminUsuarios->listar($term, $page, $limit);
 
-        return $this->json($data);
+        $data = array_map(fn (Usuario $usuario) => $this->serializeUser($usuario), $resultado['items']);
+
+        return $this->json([
+            'data' => $data,
+            'meta' => [
+                'total'      => $resultado['total'],
+                'page'       => $resultado['page'],
+                'limit'      => $resultado['limit'],
+                'totalPages' => $resultado['totalPages'],
+            ],
+        ]);
     }
 
     #[Route('', name: 'api_admin_users_create', methods: ['POST'])]
@@ -50,13 +62,34 @@ class UsuarioController extends AbstractController
             return $this->json(['message' => 'Usuario no encontrado'], JsonResponse::HTTP_NOT_FOUND);
         }
 
-        $passwordTemporal = $this->adminUsuarios->resetearPassword($usuario);
+        $this->adminUsuarios->resetearPassword($usuario);
 
         return $this->json([
-            'message' => 'Password reseteada correctamente',
-            'passwordTemporal' => $passwordTemporal,
+            'message' => 'Password reseteada correctamente. Se ha enviado al correo del usuario.',
             'usuario' => $this->serializeUser($usuario),
         ]);
+    }
+
+    #[Route('/{id}', name: 'api_admin_users_delete', methods: ['DELETE'])]
+    public function delete(int $id, EntityManagerInterface $em): JsonResponse
+    {
+        $usuario = $this->usuarioRepository->find($id);
+
+        if (!$usuario) {
+            return $this->json(['message' => 'Usuario no encontrado'], JsonResponse::HTTP_NOT_FOUND);
+        }
+
+        // Seguridad: Evitar que el administrador se borre a sí mismo
+        if ($usuario === $this->getUser()) {
+            return $this->json(['message' => 'No puedes eliminar tu propia cuenta de administrador.'], JsonResponse::HTTP_BAD_REQUEST);
+        }
+
+        // Al tener cascade: ['remove'] en la entidad Usuario, 
+        // Doctrine eliminará automáticamente sus tareas relacionadas.
+        $em->remove($usuario);
+        $em->flush();
+
+        return $this->json(['message' => 'Usuario eliminado correctamente']);
     }
 
     private function serializeUser(Usuario $usuario): array
@@ -66,8 +99,6 @@ class UsuarioController extends AbstractController
             'nombre' => $usuario->getNombre(),
             'email' => $usuario->getEmail(),
             'roles' => $usuario->getRoles(),
-            'fechaRegistro' => $usuario->getFechaRegistro()?->format('Y-m-d H:i:s'),
-            'totalTareas' => count($usuario->getTareas()),
         ];
     }
 }

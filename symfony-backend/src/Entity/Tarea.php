@@ -29,14 +29,24 @@ class Tarea
     #[ORM\Column(nullable: true)]
     private ?\DateTime $fechaLimite = null;
 
+    #[ORM\Column(length: 10)]
+    private ?string $prioridad = 'media';
+
+    #[ORM\Column(nullable: true)]
+    private ?\DateTime $fechaActualizacion = null;
+
     #[ORM\ManyToOne(inversedBy: 'tareas')]
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
+    // Normalmente el usuario no se envía en task:read para evitar bucles infinitos
     private ?Usuario $usuario = null;
 
     public function __construct()
     {
         $this->fechaCreacion = new \DateTimeImmutable();
+        $this->prioridad = 'media';
     }
+
+    // ... (El resto de getters y setters se mantienen igual)
 
     public function getId(): ?int
     {
@@ -103,6 +113,30 @@ class Tarea
         return $this;
     }
 
+    public function getPrioridad(): ?string
+    {
+        return $this->prioridad;
+    }
+
+    public function setPrioridad(string $prioridad): static
+    {
+        $this->prioridad = $prioridad;
+
+        return $this;
+    }
+
+    public function getFechaActualizacion(): ?\DateTime
+    {
+        return $this->fechaActualizacion;
+    }
+
+    public function setFechaActualizacion(?\DateTime $fechaActualizacion): static
+    {
+        $this->fechaActualizacion = $fechaActualizacion;
+
+        return $this;
+    }
+
     public function getUsuario(): ?Usuario
     {
         return $this->usuario;
@@ -114,5 +148,4 @@ class Tarea
 
         return $this;
     }
-
 }

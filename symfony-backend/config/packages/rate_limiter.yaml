@@ -1,0 +1,13 @@
+framework:
+    rate_limiter:
+        # /api/login: máximo 5 intentos por minuto por IP
+        login:
+            policy: 'fixed_window'
+            limit: 5
+            interval: '1 minute'
+
+        # /api/auth/register: máximo 3 registros por hora por IP
+        register:
+            policy: 'fixed_window'
+            limit: 3
+            interval: '1 hour'

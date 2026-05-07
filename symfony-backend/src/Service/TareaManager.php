@@ -11,7 +11,9 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class TareaManager
 {
-    private const ESTADOS_VALIDOS = ['pendiente', 'en_progreso', 'completada'];
+    // Ajustamos a 'en progreso' para que coincida exactamente con tu Angular
+    private const ESTADOS_VALIDOS = ['pendiente', 'en progreso', 'completada'];
+    private const PRIORIDADES_VALIDAS = ['baja', 'media', 'alta'];
 
     public function __construct(
         private readonly TareaRepository $tareaRepository,
@@ -19,18 +21,28 @@ class TareaManager
     ) {
     }
 
-    public function listarPorUsuario(int $usuarioId, array $filtros = []): array
+    /**
+     * Lista las tareas aplicando los filtros recibidos desde el Controlador.
+     */
+    public function listarPorUsuario(int $usuarioId, array $filtros = [], int $page = 1, int $limit = 10): array
     {
-        return $this->tareaRepository->buscarPorFiltros(
-            $usuarioId,
-            $filtros['estado'] ?? null,
-            $filtros['texto'] ?? null
-        );
+        $estado   = $filtros['estado'] ?? null;
+        $texto    = $filtros['texto'] ?? null;
+        $prioridad = $filtros['prioridad'] ?? null;
+        $offset   = ($page - 1) * $limit;
+
+        $items = $this->tareaRepository->buscarPorFiltros($usuarioId, $estado, $texto, $prioridad, $limit, $offset);
+        $total = $this->tareaRepository->countPorFiltros($usuarioId, $estado, $texto, $prioridad);
+
+        return [
+            'items'      => $items,
+            'total'      => $total,
+            'page'       => $page,
+            'limit'      => $limit,
+            'totalPages' => $total > 0 ? (int) ceil($total / $limit) : 1,
+        ];
     }
 
-    /**
-     * Mini Reto 1: Listar solo las pendientes
-     */
     public function listarPendientes(int $usuarioId): array
     {
         return $this->listarPorUsuario($usuarioId, ['estado' => 'pendiente']);
@@ -40,6 +52,7 @@ class TareaManager
     {
         $titulo = $payload['titulo'] ?? null;
         $estado = $payload['estado'] ?? 'pendiente';
+        $prioridad = $payload['prioridad'] ?? 'media';
 
         if (!$titulo) {
             throw new BadRequestHttpException('El título es obligatorio.');
@@ -49,19 +62,26 @@ class TareaManager
             throw new BadRequestHttpException('Estado no válido.');
         }
 
-        $fechaCreacion = new \DateTimeImmutable();
-        $fechaLimite = isset($payload['fechaLimite']) ? new \DateTime($payload['fechaLimite']) : null;
+        if (!in_array($prioridad, self::PRIORIDADES_VALIDAS, true)) {
+            throw new BadRequestHttpException('Prioridad no válida.');
+        }
 
-        // Mini Reto 1: Validación de fecha límite
-        if ($fechaLimite && $fechaLimite < $fechaCreacion) {
-            throw new BadRequestHttpException('La fecha límite no puede ser anterior a la creación.');
+        // fechaCreacion ya se inicializa en el constructor de Tarea
+        $fechaLimite = null;
+
+        if (isset($payload['fechaLimite']) && $payload['fechaLimite'] !== null && $payload['fechaLimite'] !== '') {
+            try {
+                $fechaLimite = new \DateTime($payload['fechaLimite']);
+            } catch (\Exception) {
+                throw new BadRequestHttpException('La fecha límite no es válida.');
+            }
         }
 
         $tarea = (new Tarea())
             ->setTitulo($titulo)
             ->setDescripcion($payload['descripcion'] ?? null)
             ->setEstado($estado)
-            ->setFechaCreacion($fechaCreacion)
+            ->setPrioridad($prioridad)
             ->setFechaLimite($fechaLimite)
             ->setUsuario($usuario);
 
@@ -81,13 +101,34 @@ class TareaManager
             throw new BadRequestHttpException('Estado no válido.');
         }
 
+        if (isset($payload['prioridad']) && !in_array($payload['prioridad'], self::PRIORIDADES_VALIDAS, true)) {
+            throw new BadRequestHttpException('Prioridad no válida.');
+        }
+
+        $fechaLimite = $tarea->getFechaLimite();
+
+        if (array_key_exists('fechaLimite', $payload)) {
+            if ($payload['fechaLimite'] === null || $payload['fechaLimite'] === '') {
+                $fechaLimite = null;
+            } else {
+                try {
+                    $fechaLimite = new \DateTime($payload['fechaLimite']);
+                } catch (\Exception) {
+                    throw new BadRequestHttpException('La fecha límite no es válida.');
+                }
+            }
+        }
+
         $tarea
             ->setTitulo($payload['titulo'] ?? $tarea->getTitulo())
             ->setDescripcion($payload['descripcion'] ?? $tarea->getDescripcion())
             ->setEstado($payload['estado'] ?? $tarea->getEstado())
-            ->setFechaLimite(isset($payload['fechaLimite']) ? new \DateTime($payload['fechaLimite']) : $tarea->getFechaLimite());
+            ->setPrioridad($payload['prioridad'] ?? $tarea->getPrioridad())
+            ->setFechaLimite($fechaLimite)
+            ->setFechaActualizacion(new \DateTime());
 
         $this->entityManager->flush();
+
         return $tarea;
     }
 
@@ -97,7 +138,7 @@ class TareaManager
             throw new BadRequestHttpException('Estado no válido.');
         }
 
-        $tarea->setEstado($estado);
+        $tarea->setEstado($estado)->setFechaActualizacion(new \DateTime());
         $this->entityManager->flush();
 
         return $tarea;

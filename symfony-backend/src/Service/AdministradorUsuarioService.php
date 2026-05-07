@@ -24,9 +24,19 @@ class AdministradorUsuarioService
     /**
      * Devuelve usuarios filtrando por nombre o email si se indica.
      */
-    public function listar(?string $busqueda = null): array
+    public function listar(?string $busqueda = null, int $page = 1, int $limit = 15): array
     {
-        return $this->usuarioRepository->buscarPorEmailONombre($busqueda);
+        $offset = ($page - 1) * $limit;
+        $items  = $this->usuarioRepository->buscarPorEmailONombre($busqueda, $limit, $offset);
+        $total  = $this->usuarioRepository->countPorBusqueda($busqueda);
+
+        return [
+            'items'      => $items,
+            'total'      => $total,
+            'page'       => $page,
+            'limit'      => $limit,
+            'totalPages' => $total > 0 ? (int) ceil($total / $limit) : 1,
+        ];
     }
 
     /**

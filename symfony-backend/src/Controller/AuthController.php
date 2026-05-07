@@ -28,16 +28,30 @@ final class AuthController extends AbstractController
     {
         $payload = json_decode($request->getContent(), true) ?? [];
 
-        if (!isset($payload['email'], $payload['password'])) {
+        $email = $payload['email'] ?? null;
+        $password = $payload['password'] ?? null;
+
+        if (!$email || !$password) {
             throw new BadRequestHttpException('Faltan campos obligatorios.');
         }
 
-        $usuario = (new Usuario())
-            ->setEmail($payload['email'])
-            ->setNombre($payload['nombre'] ?? 'Nuevo usuario')
-            ->setRoles($payload['roles'] ?? ['ROLE_USER']);
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            throw new BadRequestHttpException('El formato del email no es válido.');
+        }
 
-        $usuario->setPassword($this->passwordHasher->hashPassword($usuario, $payload['password']));
+        $usuarioExistente = $this->entityManager->getRepository(Usuario::class)->findOneBy(['email' => $email]);
+        if ($usuarioExistente) {
+            throw new BadRequestHttpException('El email ya está registrado.');
+        }
+
+        // Los roles se asignan siempre como ROLE_USER en el registro público,
+        // ignorando cualquier valor que el cliente intente enviar.
+        $usuario = (new Usuario())
+            ->setEmail($email)
+            ->setNombre($payload['nombre'] ?? 'Nuevo usuario')
+            ->setRoles(['ROLE_USER']);
+
+        $usuario->setPassword($this->passwordHasher->hashPassword($usuario, $password));
 
         $this->entityManager->persist($usuario);
         $this->entityManager->flush();
@@ -71,10 +85,88 @@ final class AuthController extends AbstractController
         /** @var Usuario|null $usuario */
         $usuario = $this->getUser();
 
+        return $this->json($this->serializeUser($usuario));
+    }
+
+    #[Route('/api/me', name: 'api_auth_update_me', methods: ['PATCH'])]
+    public function updateMe(Request $request): JsonResponse
+    {
+        /** @var Usuario|null $usuario */
+        $usuario = $this->getUser();
+
+        if (!$usuario instanceof Usuario) {
+            return $this->json(['message' => 'Usuario no autenticado'], JsonResponse::HTTP_UNAUTHORIZED);
+        }
+
+        $payload = json_decode($request->getContent(), true) ?? [];
+
+        if (array_key_exists('nombre', $payload)) {
+            $nombre = trim((string) $payload['nombre']);
+
+            if ($nombre === '') {
+                throw new BadRequestHttpException('El nombre es obligatorio.');
+            }
+
+            $usuario->setNombre($nombre);
+        }
+
+        if (array_key_exists('email', $payload)) {
+            $email = trim((string) $payload['email']);
+
+            if ($email === '') {
+                throw new BadRequestHttpException('El email es obligatorio.');
+            }
+
+            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                throw new BadRequestHttpException('El formato del email no es válido.');
+            }
+
+            $usuarioExistente = $this->entityManager->getRepository(Usuario::class)->findOneBy(['email' => $email]);
+            if ($usuarioExistente && $usuarioExistente->getId() !== $usuario->getId()) {
+                throw new BadRequestHttpException('El email ya está registrado.');
+            }
+
+            $usuario->setEmail($email);
+        }
+
+        $currentPassword = (string) ($payload['currentPassword'] ?? '');
+        $newPassword = (string) ($payload['newPassword'] ?? '');
+
+        if ($currentPassword !== '' && $newPassword === '') {
+            throw new BadRequestHttpException('Debes indicar la nueva contraseña.');
+        }
+
+        if ($newPassword !== '') {
+            if (strlen($newPassword) < 6) {
+                throw new BadRequestHttpException('La nueva contraseña debe tener al menos 6 caracteres.');
+            }
+
+            if ($currentPassword === '') {
+                throw new BadRequestHttpException('Debes indicar tu contraseña actual.');
+            }
+
+            if (!$this->passwordHasher->isPasswordValid($usuario, $currentPassword)) {
+                throw new BadRequestHttpException('La contraseña actual no es correcta.');
+            }
+
+            $usuario->setPassword($this->passwordHasher->hashPassword($usuario, $newPassword));
+        }
+
+        $this->entityManager->flush();
+
         return $this->json([
-            'id' => $usuario?->getId(),
-            'email' => $usuario?->getUserIdentifier(),
-            'roles' => $usuario?->getRoles(),
+            'message' => 'Perfil actualizado correctamente',
+            'user' => $this->serializeUser($usuario),
         ]);
+    }
+
+    private function serializeUser(?Usuario $usuario): array
+    {
+        return [
+            'id' => $usuario?->getId(),
+            'nombre' => $usuario?->getNombre(),
+            'email' => $usuario?->getUserIdentifier(),
+            'roles' => $usuario?->getRoles() ?? [],
+        ];
     }
 }

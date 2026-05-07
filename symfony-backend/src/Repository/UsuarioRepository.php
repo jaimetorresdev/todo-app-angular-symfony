@@ -33,56 +33,32 @@ class UsuarioRepository extends ServiceEntityRepository implements PasswordUpgra
         $this->getEntityManager()->flush();
     }
 
-    public function buscarPorEmailONombre(?string $term): array
+    public function buscarPorEmailONombre(?string $term, int $limit = 15, int $offset = 0): array
     {
         $qb = $this->createQueryBuilder('u');
 
         if ($term) {
-            $term = '%' . strtolower($term) . '%';
-
-            $qb
-                ->andWhere('LOWER(u.email) LIKE :term OR LOWER(u.nombre) LIKE :term')
-                ->setParameter('term', $term);
+            $qb->andWhere('LOWER(u.email) LIKE :term OR LOWER(u.nombre) LIKE :term')
+               ->setParameter('term', '%' . strtolower($term) . '%');
         }
 
         return $qb
             ->orderBy('u.nombre', 'ASC')
+            ->setMaxResults($limit)
+            ->setFirstResult($offset)
             ->getQuery()
             ->getResult();
     }
 
-    public function contarTareasPorEstado(): array
+    public function countPorBusqueda(?string $term): int
     {
-        return $this->createQueryBuilder('u')
-            ->select('u.id', 'u.nombre', 't.estado', 'COUNT(t.id) AS total')
-            ->leftJoin('u.tareas', 't')
-            ->groupBy('u.id', 'u.nombre', 't.estado')
-            ->getQuery()
-            ->getArrayResult();
+        $qb = $this->createQueryBuilder('u')->select('COUNT(u.id)');
+
+        if ($term) {
+            $qb->andWhere('LOWER(u.email) LIKE :term OR LOWER(u.nombre) LIKE :term')
+               ->setParameter('term', '%' . strtolower($term) . '%');
+        }
+
+        return (int) $qb->getQuery()->getSingleScalarResult();
     }
-
-    //    /**
-    //     * @return Usuario[] Returns an array of Usuario objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('u')
-    //            ->andWhere('u.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('u.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
-
-    //    public function findOneBySomeField($value): ?Usuario
-    //    {
-    //        return $this->createQueryBuilder('u')
-    //            ->andWhere('u.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
 }
