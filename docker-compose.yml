@@ -14,12 +14,10 @@ services:
         condition: service_healthy
     ports:
       - "8000:8000"
+    # depends_on con condition: service_healthy ya garantiza que la BD está
+    # disponible antes de iniciar el backend. El loop pg_isready era redundante.
     command: >
       bash -c "
-        until pg_isready -h db -U symfony -d symfony_db; do
-          sleep 2;
-        done;
-
         if [ ! -f /var/www/app/vendor/autoload.php ]; then
           composer install;
         fi
@@ -47,6 +45,7 @@ services:
       test: ["CMD-SHELL", "pg_isready -U symfony -d symfony_db"]
       interval: 10s
       retries: 5
+      start_period: 15s
 
   frontend:
     build:
