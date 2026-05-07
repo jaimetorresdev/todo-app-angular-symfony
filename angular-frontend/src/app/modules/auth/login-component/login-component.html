@@ -1,0 +1,143 @@
+<div class="flex min-h-screen bg-white dark:bg-slate-950">
+
+  <!-- ── Panel izquierdo decorativo ── -->
+  <aside class="hidden lg:flex lg:w-1/2 flex-col justify-between bg-blue-600 p-12 relative overflow-hidden" aria-hidden="true">
+    <!-- Patrón de fondo sutil -->
+    <div class="absolute inset-0 opacity-10"
+      style="background-image: radial-gradient(circle at 25% 25%, #ffffff 1px, transparent 1px), radial-gradient(circle at 75% 75%, #ffffff 1px, transparent 1px); background-size: 48px 48px;">
+    </div>
+
+    <div class="relative">
+      <a routerLink="/" class="text-2xl font-black tracking-tighter text-white">
+        Task<span class="opacity-70">Pro</span>
+      </a>
+    </div>
+
+    <div class="relative space-y-6">
+      <blockquote class="text-3xl font-bold leading-tight text-white">
+        "La productividad no es hacer más cosas, es hacer las cosas correctas."
+      </blockquote>
+
+      <div class="flex gap-4">
+        <div class="rounded-2xl bg-white/10 p-5 flex-1 backdrop-blur-sm">
+          <p class="text-3xl font-black text-white">∞</p>
+          <p class="mt-1 text-sm text-blue-100">Tareas sin límite</p>
+        </div>
+        <div class="rounded-2xl bg-white/10 p-5 flex-1 backdrop-blur-sm">
+          <p class="text-3xl font-black text-white">3</p>
+          <p class="mt-1 text-sm text-blue-100">Niveles de prioridad</p>
+        </div>
+      </div>
+    </div>
+
+    <p class="relative text-sm text-blue-200">© 2026 TaskPro</p>
+  </aside>
+
+  <!-- ── Panel derecho: formulario ── -->
+  <main class="flex flex-1 flex-col items-center justify-center px-6 py-16 sm:px-12">
+
+    <!-- Enlace de vuelta solo en móvil -->
+    <div class="mb-8 w-full max-w-sm lg:hidden">
+      <a routerLink="/"
+        class="inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-blue-600 transition-colors">
+        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
+        </svg>
+        Volver al inicio
+      </a>
+    </div>
+
+    <section class="w-full max-w-sm">
+
+      <!-- Logo en móvil -->
+      <p class="mb-8 text-xl font-black tracking-tighter text-slate-900 dark:text-white lg:hidden">
+        Task<span class="text-blue-600">Pro</span>
+      </p>
+
+      <header class="mb-8">
+        <h1 class="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Bienvenido de nuevo</h1>
+        <p class="mt-1.5 text-sm text-slate-500 dark:text-slate-400">Accede para gestionar tus tareas.</p>
+      </header>
+
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate class="space-y-5">
+
+        <!-- Email -->
+        <div>
+          <label for="email" class="block text-xs font-semibold uppercase tracking-widest text-slate-500 dark:text-slate-400 mb-1.5">
+            Correo electrónico
+          </label>
+          <input
+            id="email"
+            type="email"
+            formControlName="email"
+            autocomplete="email"
+            placeholder="tu@email.com"
+            class="h-11 w-full rounded-xl border px-4 text-sm text-slate-900 placeholder:text-slate-400 transition-all dark:text-slate-100 dark:placeholder:text-slate-500 focus:outline-none focus:ring-4"
+            [class]="(form.get('email')?.invalid && form.get('email')?.touched)
+              ? 'border-red-400 bg-red-50 focus:border-red-500 focus:ring-red-500/10 dark:bg-red-950/20 dark:border-red-700'
+              : 'border-slate-200 bg-white focus:border-blue-500 focus:ring-blue-500/10 dark:border-slate-700 dark:bg-slate-800/60'"
+            aria-describedby="email-error"
+          />
+          <div id="email-error" aria-live="polite">
+            @if (form.get('email')?.hasError('required') && form.get('email')?.touched) {
+              <p class="mt-1.5 text-xs font-medium text-red-600 dark:text-red-400">El email es obligatorio.</p>
+            }
+            @if (form.get('email')?.hasError('email') && form.get('email')?.touched) {
+              <p class="mt-1.5 text-xs font-medium text-red-600 dark:text-red-400">Introduce un email válido.</p>
+            }
+          </div>
+        </div>
+
+        <!-- Contraseña -->
+        <div>
+          <label for="password" class="block text-xs font-semibold uppercase tracking-widest text-slate-500 dark:text-slate-400 mb-1.5">
+            Contraseña
+          </label>
+          <input
+            id="password"
+            type="password"
+            formControlName="password"
+            autocomplete="current-password"
+            placeholder="••••••••"
+            class="h-11 w-full rounded-xl border px-4 text-sm text-slate-900 placeholder:text-slate-400 transition-all dark:text-slate-100 focus:outline-none focus:ring-4"
+            [class]="(form.get('password')?.invalid && form.get('password')?.touched)
+              ? 'border-red-400 bg-red-50 focus:border-red-500 focus:ring-red-500/10 dark:bg-red-950/20 dark:border-red-700'
+              : 'border-slate-200 bg-white focus:border-blue-500 focus:ring-blue-500/10 dark:border-slate-700 dark:bg-slate-800/60'"
+            aria-describedby="password-error"
+          />
+          <div id="password-error" aria-live="polite">
+            @if (form.get('password')?.hasError('required') && form.get('password')?.touched) {
+              <p class="mt-1.5 text-xs font-medium text-red-600 dark:text-red-400">La contraseña es obligatoria.</p>
+            }
+          </div>
+        </div>
+
+        <!-- Botón de submit -->
+        <button
+          type="submit"
+          [disabled]="loading"
+          class="mt-2 h-11 w-full rounded-xl bg-blue-600 text-sm font-bold text-white shadow-sm shadow-blue-600/20 transition-all hover:bg-blue-700 active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed disabled:active:scale-100"
+        >
+          {{ loading ? 'Accediendo...' : 'Entrar' }}
+        </button>
+
+      </form>
+
+      <!-- Footer del card -->
+      <div class="mt-8 border-t border-slate-100 pt-6 text-center dark:border-slate-800">
+        <p class="text-sm text-slate-500 dark:text-slate-400">
+          ¿No tienes cuenta?
+          <a routerLink="/register" class="ml-1 font-semibold text-blue-600 hover:text-blue-700 transition-colors dark:text-blue-400">
+            Regístrate gratis
+          </a>
+        </p>
+        <a routerLink="/"
+          class="mt-4 hidden lg:inline-block text-xs font-medium text-slate-400 hover:text-slate-600 transition-colors dark:hover:text-slate-300">
+          ← Volver al inicio
+        </a>
+      </div>
+
+    </section>
+  </main>
+
+</div>

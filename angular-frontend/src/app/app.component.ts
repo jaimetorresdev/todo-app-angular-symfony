@@ -1,12 +1,37 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { ToastComponent } from './shared/components/toast-component/toast-component';
+import { AuthStore } from './shared/services/auth-store';
+import { NavbarComponent } from './shared/components/navbar-component/navbar-component';
+import { ConfirmModalComponent } from './shared/components/confirm-modal/confirm-modal.component';
 
 @Component({
   selector: 'app-root',
-  imports: [],
+  standalone: true,
+  imports: [NavbarComponent, RouterOutlet, ToastComponent, ConfirmModalComponent],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.css'
+  styleUrls: ['./app.component.css'],
 })
 export class AppComponent {
-  title = 'angular-frontend';
+  private readonly themeStorageKey = 'theme';
+
+  constructor(private readonly authStore: AuthStore) {
+    this.applySavedTheme();
+
+    if (this.authStore.token()) {
+      this.authStore.loadMe().subscribe({
+        error: () => this.authStore.clearSession(),
+      });
+    }
+  }
+
+  private applySavedTheme(): void {
+    const savedTheme = localStorage.getItem(this.themeStorageKey);
+
+    if (savedTheme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }
 }

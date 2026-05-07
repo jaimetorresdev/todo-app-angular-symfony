@@ -1,0 +1,74 @@
+<div class="flex flex-col min-h-screen bg-slate-50 dark:bg-slate-950">
+
+  <!-- ── Header compacto con gradiente ── -->
+  <div class="relative overflow-hidden
+    bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800
+    dark:from-slate-900 dark:via-slate-900 dark:to-slate-900
+    border-b border-transparent dark:border-slate-800
+    px-6 pt-4 pb-4 sm:px-10">
+
+    <!-- Orbes decorativos -->
+    <div class="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
+      <div class="absolute -top-20 -right-20 h-64 w-64 rounded-full bg-white/5 blur-3xl"></div>
+      <div class="absolute -bottom-10 -left-10 h-48 w-48 rounded-full bg-indigo-500/15 dark:bg-blue-900/10 blur-3xl"></div>
+    </div>
+
+    <div class="relative z-10 flex items-center justify-between gap-4">
+
+      <div class="flex items-center gap-3 min-w-0">
+        <div class="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl bg-white/15 border border-white/20 backdrop-blur-sm">
+          <svg class="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+          </svg>
+        </div>
+        <div class="min-w-0">
+          <h1 class="text-lg font-black tracking-tight text-white dark:text-slate-100 leading-tight">
+            Mis Tareas
+          </h1>
+          <p class="text-xs text-blue-200/60 dark:text-slate-500 hidden sm:block truncate">
+            Todo bajo control. Sin excusas, sin retrasos.
+          </p>
+        </div>
+      </div>
+
+      <button
+        type="button"
+        (click)="showForm = !showForm"
+        class="inline-flex flex-shrink-0 items-center gap-2 h-9 rounded-xl px-4 text-sm font-bold transition-all active:scale-95"
+        [ngClass]="showForm
+          ? 'bg-white/15 text-white border border-white/20 hover:bg-white/25 backdrop-blur-sm'
+          : 'bg-white text-blue-700 shadow-lg shadow-blue-900/20 hover:bg-blue-50 dark:bg-slate-800 dark:text-blue-400 dark:border dark:border-slate-700 dark:hover:bg-slate-700 dark:shadow-none'">
+        <svg class="h-3.5 w-3.5 transition-transform duration-200" [class.rotate-45]="showForm" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/>
+        </svg>
+        {{ showForm ? 'Cerrar' : 'Nueva tarea' }}
+      </button>
+
+    </div>
+  </div>
+
+  <!-- ── Cuerpo principal ── -->
+  <main class="flex-1 w-full px-4 pt-4 pb-8 sm:px-6">
+
+    <!-- Formulario nueva tarea -->
+    <div *ngIf="showForm" class="mb-6 rounded-2xl border border-blue-100 bg-gradient-to-b from-blue-50/70 to-white dark:border-blue-900/30 dark:from-blue-950/10 dark:to-slate-900 px-6 py-5">
+      <p class="mb-4 text-[10px] font-black uppercase tracking-widest text-blue-500">Nueva tarea</p>
+      <app-task-form-component
+        [submitting]="creatingTask"
+        [showCancel]="true"
+        submitLabel="Crear tarea"
+        (submitted)="onTaskSubmitted($event)"
+        (cancelled)="onFormCancelled()"
+      ></app-task-form-component>
+    </div>
+
+    <!-- Lista / Kanban -->
+    <app-task-list-component
+      defaultView="kanban"
+      (taskDeleted)="list?.loadTasks()"
+      (taskUpdated)="list?.loadTasks()"
+    ></app-task-list-component>
+
+  </main>
+
+</div>

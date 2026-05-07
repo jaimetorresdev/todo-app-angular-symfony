@@ -1,0 +1,239 @@
+<div class="flex min-h-screen flex-col bg-slate-50 dark:bg-slate-950">
+
+  <div class="relative overflow-hidden
+    bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800
+    dark:from-slate-900 dark:via-slate-900 dark:to-slate-900
+    border-b border-transparent dark:border-slate-800
+    px-6 pt-8 pb-8 sm:px-10 mb-8">
+
+    <div class="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
+      <div class="absolute -top-24 -right-24 h-80 w-80 rounded-full bg-white/5 blur-3xl"></div>
+      <div class="absolute -bottom-16 -left-16 h-64 w-64 rounded-full bg-indigo-500/15 dark:bg-blue-900/10 blur-3xl"></div>
+    </div>
+
+    <div class="relative z-10 flex flex-wrap items-end justify-between gap-4">
+      <div>
+        <div class="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-widest mb-3
+          bg-white/10 border border-white/20 text-blue-100
+          dark:bg-blue-950/60 dark:border-blue-800/60 dark:text-blue-300
+          backdrop-blur-sm">
+          <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 7.5A2.5 2.5 0 016.5 5h11A2.5 2.5 0 0120 7.5v9a2.5 2.5 0 01-2.5 2.5h-11A2.5 2.5 0 014 16.5v-9z"/>
+            <path stroke-linecap="round" stroke-linejoin="round" d="M8 9.5h8M8 14.5h5"/>
+          </svg>
+          Ajustes
+        </div>
+        <h1 class="text-2xl font-black tracking-tight text-white dark:text-slate-100 sm:text-3xl">
+          Gestiona tu cuenta
+        </h1>
+        <p class="mt-1 text-sm text-blue-200/70 dark:text-slate-500">
+          Actualiza tu perfil y refuerza la seguridad desde un panel claro y centralizado.
+        </p>
+      </div>
+
+      <a routerLink="/tasks"
+        class="inline-flex flex-shrink-0 items-center gap-2 h-10 rounded-xl px-5 text-sm font-bold transition-all active:scale-95
+          bg-white text-blue-700 shadow-xl shadow-blue-900/20 hover:bg-blue-50
+          dark:bg-slate-800 dark:text-blue-400 dark:border dark:border-slate-700 dark:hover:bg-slate-700 dark:shadow-none">
+        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+        </svg>
+        Ver tareas
+      </a>
+    </div>
+  </div>
+
+  <main class="flex-1 px-6 pb-12 sm:px-10">
+    <div class="space-y-8">
+
+      <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-700 dark:bg-slate-900 sm:p-6">
+        <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div class="flex items-center gap-4">
+            <div class="flex h-14 w-14 items-center justify-center rounded-3xl bg-blue-600 text-xl font-black text-white shadow-lg shadow-blue-600/20">
+              {{ userInitial }}
+            </div>
+            <div class="min-w-0">
+              <p class="truncate text-lg font-bold text-slate-900 dark:text-slate-100">{{ userName }}</p>
+              <p class="truncate text-sm text-slate-400">{{ userEmail }}</p>
+            </div>
+          </div>
+
+          <div class="rounded-2xl border border-slate-100 bg-slate-50 px-4 py-3 text-sm text-slate-500 dark:border-slate-800 dark:bg-slate-950/50 dark:text-slate-400">
+            Si cambias tu correo o contraseña, te pediremos iniciar sesión de nuevo.
+          </div>
+        </div>
+      </div>
+
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate class="space-y-8">
+
+          <section class="rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-900 overflow-hidden">
+            <div class="relative overflow-hidden border-b border-slate-100 dark:border-slate-800">
+              <div class="absolute inset-0 bg-gradient-to-r from-blue-50 via-white to-indigo-50/30 dark:from-blue-950/20 dark:via-slate-900 dark:to-indigo-950/10 pointer-events-none"></div>
+              <div class="relative flex items-center gap-4 px-6 py-5">
+                <span class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-blue-600 text-white shadow-lg shadow-blue-600/30">
+                  <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6.75a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.5 20.118a7.5 7.5 0 1115 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.5-1.632z"/>
+                  </svg>
+                </span>
+                <div>
+                  <h2 class="text-xl font-black tracking-tight text-slate-900 dark:text-slate-100">Perfil</h2>
+                  <p class="text-sm text-slate-500 dark:text-slate-400">Actualiza los datos principales de tu cuenta.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 gap-5 px-6 py-5 md:grid-cols-2">
+              <div class="md:col-span-2">
+                <label for="nombre" class="label">Nombre completo</label>
+                <input
+                  id="nombre"
+                  type="text"
+                  formControlName="nombre"
+                  autocomplete="name"
+                  placeholder="Tu nombre"
+                  class="field h-12 rounded-2xl"
+                  [class.field-error]="hasFieldError('nombre')"
+                />
+                @if (hasFieldError('nombre', 'required')) {
+                  <p class="field-msg-error">Tu nombre es obligatorio.</p>
+                }
+              </div>
+
+              <div class="md:col-span-2">
+                <label for="email" class="label">Correo electrónico</label>
+                <input
+                  id="email"
+                  type="email"
+                  formControlName="email"
+                  autocomplete="email"
+                  placeholder="tu@email.com"
+                  class="field h-12 rounded-2xl"
+                  [class.field-error]="hasFieldError('email')"
+                />
+                @if (hasFieldError('email', 'required')) {
+                  <p class="field-msg-error">El email es obligatorio.</p>
+                }
+                @if (hasFieldError('email', 'email')) {
+                  <p class="field-msg-error">Introduce un email válido.</p>
+                }
+              </div>
+            </div>
+          </section>
+
+          <section class="rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-900 overflow-hidden">
+            <div class="relative overflow-hidden border-b border-slate-100 dark:border-slate-800">
+              <div class="absolute inset-0 bg-gradient-to-r from-blue-50 via-white to-indigo-50/30 dark:from-blue-950/20 dark:via-slate-900 dark:to-indigo-950/10 pointer-events-none"></div>
+              <div class="relative flex items-center gap-4 px-6 py-5">
+                <span class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-blue-600 text-white shadow-lg shadow-blue-600/30">
+                  <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 0h10.5A2.25 2.25 0 0119.5 12.75v6A2.25 2.25 0 0117.25 21h-10.5A2.25 2.25 0 014.5 18.75v-6A2.25 2.25 0 016.75 10.5z"/>
+                  </svg>
+                </span>
+                <div>
+                  <h2 class="text-xl font-black tracking-tight text-slate-900 dark:text-slate-100">Seguridad</h2>
+                  <p class="text-sm text-slate-500 dark:text-slate-400">Cambia tu contraseña cuando quieras reforzar el acceso.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="border-b border-blue-100 dark:border-blue-900/40 bg-gradient-to-b from-blue-50/70 to-white dark:from-blue-950/10 dark:to-slate-900 px-6 py-5">
+              <p class="mb-4 text-[10px] font-black uppercase tracking-widest text-blue-500 dark:text-blue-400">Seguridad de acceso</p>
+
+              <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
+                <div class="md:col-span-2">
+                  <label for="currentPassword" class="label">Contraseña actual</label>
+                  <div class="relative">
+                    <input
+                      id="currentPassword"
+                      [type]="showCurrentPassword ? 'text' : 'password'"
+                      formControlName="currentPassword"
+                      autocomplete="current-password"
+                      placeholder="Tu contraseña actual"
+                      class="field h-12 rounded-2xl pr-11"
+                      [class.field-error]="hasFieldError('currentPassword') || hasSecurityError('currentPasswordRequired')"
+                    />
+                    <button type="button" (click)="showCurrentPassword = !showCurrentPassword"
+                      class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors">
+                      <svg *ngIf="!showCurrentPassword" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                      <svg *ngIf="showCurrentPassword" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88"/></svg>
+                    </button>
+                  </div>
+                  @if (hasSecurityError('currentPasswordRequired')) {
+                    <p class="field-msg-error">Necesitas indicar tu contraseña actual para cambiarla.</p>
+                  }
+                </div>
+
+                <div>
+                  <label for="newPassword" class="label">Nueva contraseña</label>
+                  <div class="relative">
+                    <input
+                      id="newPassword"
+                      [type]="showNewPassword ? 'text' : 'password'"
+                      formControlName="newPassword"
+                      autocomplete="new-password"
+                      placeholder="Mínimo 6 caracteres"
+                      class="field h-12 rounded-2xl pr-11"
+                      [class.field-error]="hasFieldError('newPassword') || hasSecurityError('newPasswordRequired')"
+                    />
+                    <button type="button" (click)="showNewPassword = !showNewPassword"
+                      class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors">
+                      <svg *ngIf="!showNewPassword" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                      <svg *ngIf="showNewPassword" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88"/></svg>
+                    </button>
+                  </div>
+                  @if (hasFieldError('newPassword', 'minlength')) {
+                    <p class="field-msg-error">Usa al menos 6 caracteres.</p>
+                  }
+                  @if (hasSecurityError('newPasswordRequired')) {
+                    <p class="field-msg-error">Introduce la nueva contraseña para guardar el cambio.</p>
+                  }
+                </div>
+
+                <div>
+                  <label for="confirmPassword" class="label">Confirmar contraseña</label>
+                  <div class="relative">
+                    <input
+                      id="confirmPassword"
+                      [type]="showConfirmPassword ? 'text' : 'password'"
+                      formControlName="confirmPassword"
+                      autocomplete="new-password"
+                      placeholder="Repite la nueva contraseña"
+                      class="field h-12 rounded-2xl pr-11"
+                      [class.field-error]="hasSecurityError('passwordMismatch')"
+                    />
+                    <button type="button" (click)="showConfirmPassword = !showConfirmPassword"
+                      class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors">
+                      <svg *ngIf="!showConfirmPassword" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                      <svg *ngIf="showConfirmPassword" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88"/></svg>
+                    </button>
+                  </div>
+                  @if (hasSecurityError('passwordMismatch')) {
+                    <p class="field-msg-error">Las contraseñas nuevas no coinciden.</p>
+                  }
+                </div>
+              </div>
+            </div>
+
+            <div class="flex flex-col gap-4 px-6 py-5 sm:flex-row sm:items-center sm:justify-between">
+              <p class="text-sm text-slate-500 dark:text-slate-400">
+                Guarda los cambios cuando todo esté listo.
+              </p>
+              <button
+                type="submit"
+                [disabled]="saving"
+                class="inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-blue-600 px-6 text-sm font-bold text-white shadow-lg shadow-blue-600/25 transition-all hover:bg-blue-700 active:scale-95 disabled:opacity-60"
+              >
+                <svg *ngIf="saving" class="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                </svg>
+                {{ saving ? 'Guardando...' : 'Guardar ajustes' }}
+              </button>
+            </div>
+          </section>
+
+      </form>
+    </div>
+  </main>
+
+</div>

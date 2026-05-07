@@ -1,0 +1,148 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()"
+  [ngClass]="compact
+    ? 'flex flex-col gap-4'
+    : 'rounded-2xl border border-slate-200 bg-white p-8 shadow-sm dark:border-slate-700 dark:bg-slate-900'">
+
+  <!-- Cabecera — solo en modo normal -->
+  <div *ngIf="!compact" class="mb-8 border-b border-slate-100 pb-4 dark:border-slate-800">
+    <h3 class="text-lg font-bold text-slate-900 dark:text-slate-100">Detalles de la Tarea</h3>
+    <p class="mt-1 text-[11px] font-bold uppercase tracking-wider text-slate-500">Completa los campos para organizar tu trabajo</p>
+  </div>
+
+  <div [ngClass]="compact ? 'flex flex-col gap-3' : 'grid grid-cols-1 gap-6'">
+
+    <!-- Título -->
+    <div>
+      <label for="titulo" class="mb-1.5 block text-[11px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">
+        Título <span class="text-red-500">*</span>
+      </label>
+      <input id="titulo" type="text" formControlName="titulo"
+        placeholder="Ej: Revisar documentación técnica…"
+        [ngClass]="form.get('titulo')?.invalid && form.get('titulo')?.touched ? 'border-red-400 focus:ring-red-500/10' : 'border-slate-200 dark:border-slate-700 focus:border-blue-500 focus:ring-blue-500/10'"
+        class="h-10 w-full rounded-xl border bg-slate-50/50 px-3.5 text-sm text-slate-900 transition focus:bg-white focus:ring-4 dark:bg-slate-800/60 dark:text-slate-100 dark:focus:bg-slate-800"/>
+      <div *ngIf="form.get('titulo')?.touched && form.get('titulo')?.errors" class="mt-1 space-y-0.5">
+        <p *ngIf="form.get('titulo')?.hasError('required')" class="text-xs font-semibold text-red-500">El título es obligatorio.</p>
+        <p *ngIf="form.get('titulo')?.hasError('minlength')" class="text-xs font-semibold text-red-500">Mínimo 3 caracteres.</p>
+      </div>
+    </div>
+
+    <!-- Descripción -->
+    <div>
+      <div class="mb-1.5 flex items-center justify-between">
+        <label for="descripcion" class="block text-[11px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">Descripción</label>
+        <span class="text-[11px] font-semibold tabular-nums" [ngClass]="descLength > 500 ? 'text-red-500' : 'text-slate-400'">{{ descLength }}/500</span>
+      </div>
+      <textarea id="descripcion" formControlName="descripcion" [rows]="compact ? 2 : 3"
+        placeholder="¿De qué trata esta tarea?…"
+        [ngClass]="form.get('descripcion')?.invalid && form.get('descripcion')?.touched ? 'border-red-400' : 'border-slate-200 dark:border-slate-700 focus:border-blue-500 focus:ring-blue-500/10'"
+        class="w-full resize-none rounded-xl border bg-slate-50/50 p-3.5 text-sm text-slate-900 transition focus:bg-white focus:ring-4 dark:bg-slate-800/60 dark:text-slate-100 dark:focus:bg-slate-800"></textarea>
+      <p *ngIf="form.get('descripcion')?.hasError('maxlength') && form.get('descripcion')?.touched" class="mt-1 text-xs font-semibold text-red-500">Máximo 500 caracteres.</p>
+    </div>
+
+    <!-- Asignar a usuario (solo si se proporciona lista de usuarios) -->
+    @if (users.length > 0) {
+      <div>
+        <label class="mb-1.5 block text-[11px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">Asignar a</label>
+        <select formControlName="userId"
+          class="h-10 w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3.5 text-sm text-slate-900 transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10 dark:border-slate-700 dark:bg-slate-800/60 dark:text-slate-100">
+          <option [ngValue]="null">Sin asignar</option>
+          @for (u of users; track u.id) {
+            <option [ngValue]="u.id">{{ u.nombre || u.email }}</option>
+          }
+        </select>
+      </div>
+    }
+
+    <!-- Estado / Prioridad / Fecha -->
+    @if (compact) {
+      <!-- Compact: Estado fila completa, Prioridad+Fecha en 2 columnas -->
+      <div class="flex flex-col gap-3">
+        <div>
+          <label class="mb-1.5 block text-[11px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">Estado</label>
+          <select formControlName="estado"
+            class="h-9 w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3 text-sm text-slate-900 transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10 dark:border-slate-700 dark:bg-slate-800/60 dark:text-slate-100">
+            <option value="pendiente">Pendiente</option>
+            <option value="en progreso">En progreso</option>
+            <option value="completada">Completada</option>
+          </select>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="mb-1.5 block text-[11px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">Prioridad</label>
+            <select formControlName="prioridad"
+              class="h-9 w-full rounded-xl border border-slate-200 bg-slate-50/50 px-2 text-sm text-slate-900 transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10 dark:border-slate-700 dark:bg-slate-800/60 dark:text-slate-100">
+              <option value="baja">Baja</option>
+              <option value="media">Media</option>
+              <option value="alta">Alta</option>
+            </select>
+          </div>
+          <div>
+            <label class="mb-1.5 block text-[11px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">Fecha límite</label>
+            <input type="date" formControlName="fechaLimite" [min]="today"
+              class="h-9 w-full rounded-xl border border-slate-200 bg-slate-50/50 px-2 text-xs text-slate-900 transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10 dark:border-slate-700 dark:bg-slate-800/60 dark:text-slate-100"/>
+          </div>
+        </div>
+      </div>
+    } @else {
+      <!-- Normal: 3 columnas iguales -->
+      <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
+        <div>
+          <label class="mb-1.5 block text-[11px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">Estado</label>
+          <select formControlName="estado"
+            class="h-10 w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3.5 text-sm text-slate-900 transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10 dark:border-slate-700 dark:bg-slate-800/60 dark:text-slate-100">
+            <option value="pendiente">Pendiente</option>
+            <option value="en progreso">En progreso</option>
+            <option value="completada">Completada</option>
+          </select>
+        </div>
+        <div>
+          <label class="mb-1.5 block text-[11px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">Prioridad</label>
+          <select formControlName="prioridad"
+            class="h-10 w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3.5 text-sm text-slate-900 transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10 dark:border-slate-700 dark:bg-slate-800/60 dark:text-slate-100">
+            <option value="baja">↓ Baja</option>
+            <option value="media">— Media</option>
+            <option value="alta">↑ Alta</option>
+          </select>
+        </div>
+        <div>
+          <label class="mb-1.5 block text-[11px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">Fecha límite</label>
+          <input type="date" formControlName="fechaLimite" [min]="today"
+            class="h-10 w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3.5 text-sm text-slate-900 transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10 dark:border-slate-700 dark:bg-slate-800/60 dark:text-slate-100"/>
+        </div>
+      </div>
+    }
+  </div>
+
+  <!-- Acciones -->
+  <div [ngClass]="compact
+    ? 'flex items-center justify-between pt-1'
+    : 'mt-8 flex items-center justify-end gap-4 border-t border-slate-100 pt-6 dark:border-slate-800'">
+
+    <!-- Cancelar -->
+    <button *ngIf="showCancel" type="button" (click)="onCancel()" [disabled]="submitting"
+      [ngClass]="compact
+        ? 'flex items-center gap-1.5 rounded-xl border border-slate-200 px-4 py-2 text-xs font-bold text-slate-500 hover:border-slate-300 hover:text-slate-700 transition disabled:opacity-50 dark:border-slate-700 dark:text-slate-400'
+        : 'text-sm font-bold text-slate-500 hover:text-slate-700 disabled:opacity-50 transition'">
+      <svg *ngIf="compact" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+      </svg>
+      Cancelar
+    </button>
+
+    <!-- Submit -->
+    <button type="submit" [disabled]="submitting"
+      [ngClass]="compact
+        ? 'inline-flex items-center gap-2 rounded-xl bg-blue-600 px-5 py-2 text-xs font-black text-white shadow-md shadow-blue-600/20 hover:bg-blue-700 disabled:opacity-60 disabled:cursor-not-allowed transition-all active:scale-95'
+        : 'inline-flex items-center gap-2 h-11 px-8 rounded-xl bg-blue-600 text-sm font-bold text-white shadow-lg shadow-blue-600/20 hover:bg-blue-700 disabled:opacity-60 disabled:cursor-not-allowed transition-all'">
+      <svg *ngIf="submitting" class="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+      </svg>
+      <svg *ngIf="!submitting && compact" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+      </svg>
+      {{ submitting ? 'Guardando…' : submitLabel }}
+    </button>
+  </div>
+
+</form>

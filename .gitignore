@@ -1,0 +1,30 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# LibreOffice / Office lock files
+.~lock.*#
+~$*
+
+# Editor / temporales
+*.tmp
+*.swp
+*.swo
+*~
+lu*.tmp
+
+# TFG y documentación personal (no van al repo)
+TFG_*.docx
+TFG_*.pdf
+Revision_Exhaustiva_TFG.docx
+AUDITORIA_TFG_*.md
+CAPTURAS_TFG_*.md
+Figura*.png
+cambios_taskpro_*.docx
+
+# Carpetas de capturas/revisión
+_caps_code/
+_caps_review/
+_caps_review2/
